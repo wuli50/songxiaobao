@@ -97,14 +97,13 @@
                                                             <b>￥{{food.specfoods[0].price}}</b><s>$20</s>
                                                             <div class="money">
                                                                 <span class="reduce" 
-                                                                 v-if = "comNum[food.name]>0"
-                                                                @click="comNum[food.name]--;"></span>
+                                                                 v-if = "setcomNum[food.name].num>0"
+                                                                @click="comNum[food.name].num--;"></span>
                                                                 
-                                                               <input type="num" name="num" id="num" :value="comNum[food.name]"/>
-                                                               <!-- <span v-model="comNum[food.name]" class="foodNum">{{comNum[food.name]}}</span> -->
+                                                               <input type="num" name="num" id="num" v-model="setcomNum[food.name].num"/>
                                                             
                                                             <span class="add" 
-                                                                @click="comNum[food.name]++;"></span>
+                                                                @click="comNum[food.name].num++"></span>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -175,7 +174,7 @@
                 <p>{{Store[0].piecewise_agent_fee.description}}</p>
             </div>
             <div class="payment">
-                <span>购物车空空~</span>
+                <span >购物车空空~</span>
             </div>
         </div>
     </div>
@@ -185,6 +184,7 @@
 import bus from '../../bus.js'
 
 import { Blur,Tab,TabItem,Sticky, Swiper , SwiperItem ,XNumber} from "vux"
+import { setTimeout } from 'timers';
 export default {
     name:"store",
     data(){
@@ -200,14 +200,21 @@ export default {
             classList:[],
             // 商品数量
             comNum:{
-                // 商品名称 ： 数量
+                // 商品名称 ： {num:数量，price：你 }
             },
-            // 商品单价
-            comPrice:{
-                // 商品id : 单价
-            },
-            setobj:{num:1}
+           
+            seshi:{
+                old:"123",
+                name:122
+            }
         }
+    },
+    // 计算属性
+    computed:{
+        setcomNum:function(){
+            return this.comNum;
+        }
+        
     },
     // 注册组件
     components:{
@@ -224,10 +231,6 @@ export default {
         back(){
             // this.$router.back();
             location.href = "/"
-        },
-        click(){
-            this.$set(this.setobj,num,this.setobj.num++);   
-            console.log(this.setobj.num)
         },
         //   拼接图片路径
         getImag(imgsrc){
@@ -248,7 +251,6 @@ export default {
                     // 剪切选取需要的需要的数据.slice(0,2)
                     var ary = data.body;
                     this.Store = ary.filter((value,index)=>{
- 
                         return value.id == this.storeId;
                     })
                    
@@ -274,13 +276,16 @@ export default {
                 this.classList.forEach((value,index) => {
                     value.foods.forEach((value,index)=>{
                         var foodName = value.name;
-                        // console.log(foodId)
-                        this.comNum[foodName] = 0;
+                        //一个死坑！！！！【深入响应式原理，查看对象可以发现以下两种方法在Vue中是不同的】
+                        // https://cn.vuejs.org/v2/guide/reactivity.html
+                        // this.$set(this.comNum,foodName,0)
+                        this.$set(this.comNum,foodName,{num:0,price:value.specfoods[0].price})
+                        // this.comNum[foodName] = 0;
                         this.comPrice[foodName] = value.specfoods[0].price;
                     })
                 });
             // console.log(this.classList)
-            console.log(this.comNum);
+            console.log(this.comNum['全聚德烤鸭饭'].price);
             // console.log(this.comPrice);
         },
         // 滚动监听
@@ -321,6 +326,7 @@ export default {
         window.removeEventListener('scroll', this.handleScroll)
     },
 }
+
 </script>
 <style scoped>
 .left{

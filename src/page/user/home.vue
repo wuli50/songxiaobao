@@ -102,8 +102,6 @@
                 <img src="https://fuss10.elemecdn.com/3/c8/45b2ec2855ed55d90c45bf9b07abbpng.png?imageMogr/thumbnail/!710x178r/gravity/Center/crop/710x178/" alt="">
             </a>
         </div> -->
-        <!-- 我在这里修改了一下 -->
-        <p>修改了修改了</p>
         <!-- 商家列表 -->
         <div class="store-list">
             <card :header="{title:'------ 推荐商家 ------'}">
