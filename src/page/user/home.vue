@@ -93,7 +93,8 @@
                         <a href="">
                             <img src="//fuss10.elemecdn.com/2/35/696aa5cf9820adada9b11a3d14bf5jpeg.jpeg?imageMogr/thumbnail/!90x90r/gravity/Center/crop/90x90/" alt="">
                             <p>甜品饮品</p></a>
-                    </div></swiper-item>    
+                    </div>
+                </swiper-item>    
         </swiper>
 
         <!-- 图片横幅 -->
