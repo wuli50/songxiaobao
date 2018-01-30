@@ -166,7 +166,7 @@
 
         <!-- 底部购物车 -->
         <div class="shop-car">
-            <div class="car">
+            <div class="car" @click="orderShow = !orderShow">
                 <img src="../../assets/img/store/购物车.png" alt="">
             </div>
             <div class="allmoney">
@@ -177,9 +177,13 @@
                 <span v-if="allprice == 0">购物车空空~</span>
                 <span v-else>去结算</span>
             </div>
-            <div class="orderlist">
+            <div class="orderlist" v-if="orderShow">
                 <ul>
-                    <li></li>
+                    <li v-for = "">
+                        <span>name</span>
+                        <span>Xnum</span>
+                        <span>price</span>
+                    </li>
                 </ul>
             </div>
         </div>
@@ -215,10 +219,8 @@ export default {
             orderList:[
                 
             ],
-            seshi:{
-                old:"123",
-                name:122
-            }
+            orderShow:false,
+
         }
     },
     // 计算属性
