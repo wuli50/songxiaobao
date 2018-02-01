@@ -98,12 +98,12 @@
                                                             <div class="money">
                                                                 <span class="reduce" 
                                                                  v-if = "setcomNum[food.name].num>0"
-                                                                @click="comNum[food.name].num--;allFoodList(-comNum[food.name].price)"></span>
+                                                                @click="comNum[food.name].num--;allFoodList(-comNum[food.name].price,-1)"></span>
                                                                 
                                                                <input type="num" name="num" id="num" v-model="setcomNum[food.name].num"/>
                                                             
                                                             <span class="add" 
-                                                                @click="comNum[food.name].num++;allFoodList(comNum[food.name].price)"></span>
+                                                                @click="comNum[food.name].num++;allFoodList(comNum[food.name].price,1)"></span>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -168,6 +168,7 @@
         <div class="shop-car">
             <div class="car" @click="orderShow = !orderShow">
                 <img src="../../assets/img/store/购物车.png" alt="">
+                <badge :text = "allNum" v-if="allNum>0" class="all-num"></badge>
             </div>
             <div class="allmoney">
                 <p>￥<span>{{allprice.toFixed(2)}}</span></p>
@@ -208,7 +209,7 @@
 // 导入总线
 import bus from "../../bus.js";
 
-import { Blur, Tab, TabItem, Sticky, Swiper, SwiperItem, XNumber } from "vux";
+import { Blur, Tab, TabItem, Sticky, Swiper, SwiperItem, XNumber,Badge } from "vux";
 import { setTimeout } from "timers";
 import { ECONNABORTED } from "constants";
 import { ifError } from 'assert';
@@ -258,7 +259,8 @@ export default {
     Swiper,
     SwiperItem,
     XNumber,
-    Sticky
+    Sticky,
+    Badge
   },
   // 方法
   methods: {
@@ -319,26 +321,9 @@ export default {
                 num: 0,
                 price: value.specfoods[0].price
               });
-              // 错误方法
-              // this.comNum[foodName] = 0;
-              // this.comPrice[foodName] = value.specfoods[0].price;
             });
           });
-        //   console.log(this.comNum);
         });
-      // this.classList = dd.slice(0,5);
-      //     this.classList.forEach((value,index) => {
-      //         value.foods.forEach((value,index)=>{
-      //             var foodName = value.name;
-      //             //一个死坑！！！！【深入响应式原理，查看对象可以发现以下两种方法在Vue中是不同的】
-      //             // https://cn.vuejs.org/v2/guide/reactivity.html
-      //             // this.$set(this.comNum,foodName,0)
-      //             this.$set(this.comNum,foodName,{num:0,price:value.specfoods[0].price})
-      //             // this.comNum[foodName] = 0;
-      //             this.comPrice[foodName] = value.specfoods[0].price;
-      //         })
-      //     });
-      // console.log(this.comPrice);
     },
     // 滚动监听
     handleScroll() {
@@ -363,8 +348,9 @@ export default {
       }
     },
     // 总价计算
-    allFoodList(price) {
+    allFoodList(price,num) {
       this.allprice += price;
+      this.allNum += num;
     }
   },
   watch() {},
@@ -725,11 +711,16 @@ div.money input {
   right: 0;
   top: 0;
 }
+.all-num{
+  position: absolute;
+  right: 0;
+  top: 0;
+}
 /* 购物车订单列表 */
 .orderlist {
   background-color: white;
   position: absolute;
-  width: 70vw;
+  width: 100vw;
   bottom: 15vw;
   color: #969696;
   z-index: 1;
@@ -738,6 +729,7 @@ div.money input {
     padding: 1.5vw;
     border: 0.5vw solid #aaa;
     border-top-right-radius: 2vw;
+    border-top-left-radius: 2vw;
     padding-bottom: 8vw;
 }
 .orderlist li {
@@ -746,7 +738,7 @@ div.money input {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0.5vw;
+  padding: 2vw 1vw;
 }
 .orderlist li span:nth-of-type(1){
     flex-grow:1;
