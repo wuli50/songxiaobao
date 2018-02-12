@@ -176,7 +176,10 @@
             </div>
             <div class="payment">
                 <span v-if="allprice == 0">购物车空空~</span>
-                <span v-else>去结算</span>
+                <span v-else>
+                   <router-link :to='{path:"/store-order"}'>
+                  去结算
+                   </router-link></span>
             </div>
             <div class="orderlist" v-if="orderShow && allprice > 0">
                 <ul>
