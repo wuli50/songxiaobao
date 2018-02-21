@@ -14,9 +14,7 @@
                                 <span class="right">订单状态</span>
                                 <!-- <div class="clear"></div> -->
                             </h2>
-                            <p>订单时间：</p>
-                            
-                            
+                            <p>订单时间：<span>2011-11-11</span></p>
                         </div>
                         <div class="clear"></div>
                     </li>
@@ -103,10 +101,6 @@ export default {
     border: 1px solid #0081ff;
     border-radius: 1vw;
 }
-
-
-
-
 </style>
 
 

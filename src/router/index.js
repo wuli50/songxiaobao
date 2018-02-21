@@ -1,6 +1,8 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 Vue.use(Router)
+// 设置eventbus来传值
+window.eventBus = new Vue()
 
 // import Hello from '@/components/Hello'
 
@@ -12,7 +14,6 @@ import Store from "../page/user/store.vue"
 import Order from "../page/user/order.vue"
 import Findstore from "../page/user/find.vue"
 import Storeorder from "../page/user/store-order.vue"
-import Login from "../page/user/login.vue"
 
 // 配置路由规则
 const routes = [
@@ -41,10 +42,7 @@ const routes = [
     path:"/store-order",
     component:Storeorder
   },
-  {
-    path:"/login",
-    component:Login
-  }
+
 ]
 
 // 创建并导出路由

@@ -176,7 +176,7 @@
             </div>
             <div class="payment">
                 <span v-if="allprice == 0">购物车空空~</span>
-                <span v-else>
+                <span v-else  @click="goStoreOrder">
                    <router-link :to='{path:"/store-order"}'>
                   去结算
                    </router-link></span>
@@ -354,6 +354,9 @@ export default {
     allFoodList(price,num) {
       this.allprice += price;
       this.allNum += num;
+    },
+    // 跳转订单页面
+    goStoreOrder(){
     }
   },
   watch() {},
@@ -370,6 +373,21 @@ export default {
   destroyed() {
     //   离开时解除事件监听
     window.removeEventListener("scroll", this.handleScroll);
+  },
+  beforeDestroy (){
+    var orderList = [];
+    for(var i in this.orderList){
+      var ordermsg = {}
+      ordermsg.name = i;
+      ordermsg.num = this.orderList[i].num;
+      ordermsg.price = this.orderList[i].price;
+      orderList.push(ordermsg);
+    }
+    var data = {}
+    data.storeName = this.Store[0].name;
+    data.orderMsg = orderList;
+    console.log(data)
+    eventBus.$emit("orderMessage",data)
   }
 };
 </script>
