@@ -14,6 +14,7 @@ import Store from "../page/user/store.vue"
 import Order from "../page/user/order.vue"
 import Findstore from "../page/user/find.vue"
 import Storeorder from "../page/user/store-order.vue"
+import Login from "../page/user/login.vue"
 
 // 配置路由规则
 const routes = [
@@ -41,6 +42,10 @@ const routes = [
   {
     path:"/store-order",
     component:Storeorder
+  },
+  {
+    path:"/login",
+    component:Login
   },
 
 ]

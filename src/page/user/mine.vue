@@ -9,7 +9,7 @@
                       <h2>
                           <router-link to = "/login">登录</router-link>
                           /
-                          <router-link to = "/join">注册</router-link>
+                          <router-link to = "/login">注册</router-link>
                       </h2>
                       <p class="pho">
                           <img src="../../assets/img/mine/手机.png" alt="">
@@ -44,7 +44,7 @@
         <!-- 地址收藏 -->
         <ul class="address">
             <li>
-                <router-link to="/shop-ads">
+                <router-link to="/mine/shop-ads">
                     <img src="../../assets/img/mine/收货地址.png" alt="">
                     <span>收货地址</span>
                 </router-link>
