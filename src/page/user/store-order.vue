@@ -22,8 +22,11 @@
           </div>
         </cell>
       </group>
-      <div style="padding: 15px;text-align: right;">
-        <x-button @click="showMoreAds = false" plain type="primary"> 关闭 </x-button>
+      <router-link  to="/mine/add-ads" class="add-ads">
+        <div>+添加一个收货地址</div>
+      </router-link>
+      <div class="add-ads">
+        <div @click="showMoreAds = false"> 关闭 </div>
       </div>
     </popup>
   </div>
@@ -147,12 +150,18 @@ export default {
         margin: 0;
       }
     }
-    x-button{
-      color: #0091FF;
-      font-weight: 600;
-      padding: 1vw;
-      border-radius: 1vw;
-      background-color: white;
+    .add-ads{
+      width: 100%;
+      div{
+        padding: 0.5vw;
+        border: 1px solid #0091FF;
+        margin: 3vw 10vw;
+        text-align: center;
+        border-radius: 1vw;
+        line-height: 8vw;
+        color: #0091FF;
+        font-weight: bold;
+      }
     }
   }
   .main{
@@ -218,6 +227,9 @@ export default {
       line-height: 15vw;
       text-align: center;
       font-size: 4.5vw;
+      p{
+        margin: 0;
+      }
     }
   }
   .buy-title{

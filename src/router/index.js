@@ -15,6 +15,8 @@ import Order from "../page/user/order.vue"
 import Findstore from "../page/user/find.vue"
 import Storeorder from "../page/user/store-order.vue"
 import Login from "../page/user/login.vue"
+import ShopAds from '../page/user/shop-ads.vue'
+import AddAds from "../page/user/add-ads.vue"
 
 // 配置路由规则
 const routes = [
@@ -47,6 +49,14 @@ const routes = [
     path:"/login",
     component:Login
   },
+  {
+    path:"/mine/shop-ads",
+    component:ShopAds
+  },
+  {
+    path:"/mine/add-ads",
+    component:AddAds
+  }
 
 ]
 
