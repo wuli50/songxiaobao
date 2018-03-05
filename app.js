@@ -18,27 +18,24 @@ db.on('error',function(){
 app.options('/yuanshi',(req,res)=>{
     res.set('Access-Control-Allow-Origin','*')
     res.set('Access-Control-Allow-Headers','Content-Type,Access-Token')
-    console.log('收到了一个请求')
     res.status(200).json({
         message:'ok'
     })
-    // console.log(req.query);
 })
 app.post('/yuanshi',(req,res)=>{
     res.set('Access-Control-Allow-Origin','*')
-    console.log('收到了123一个请求')
     var str="";
     // from data 和 request payload 的区别
     req.on("data",function(chunk){
-        console.log(chunk)
         str+=chunk;
     })
     req.on("end",function(){
-      console.log(str)
     })
     res.status(200).json({
         message:"ok"
     })
+    // var msg = JSON.parse(str)
+    console.log(msg.data);
 })
 
 app.listen('5000',()=>{
