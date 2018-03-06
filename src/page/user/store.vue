@@ -94,7 +94,7 @@
                                                         </ul>
                                                         <!-- 数量加减 -->
                                                         <div class="price">
-                                                            <b>￥{{food.specfoods[0].price}}</b><s>$20</s>
+                                                            <b>￥{{food.specfoods[0].price}}</b><s>${{food.specfoods[0].price*2}}</s>
                                                             <div class="money">
                                                                 <span class="reduce" 
                                                                  v-if = "setcomNum[food.name].num>0"
