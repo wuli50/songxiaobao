@@ -4,9 +4,14 @@
   <div class="header">
     <card class="ads-card"
      :header="{title: '我的收货地址' }">
-      <p slot="content" class="card-content">
+      <div slot="content" class="card-content">
         {{address.message}}
-      </p>
+        <div class="ads-box">
+          <span>{{address.order_name}}</span>
+          <span>{{address.order_pho}}</span>
+        </div>
+      </div>
+      
       <div slot="footer" class="ads-footer">
         <p @click="showMoreAds = true">点击切换地址</p>
       </div>
@@ -78,7 +83,7 @@
       <p style="text-align:center;">您将取消订单，确定么？？？？</p>
     </confirm>
     <toast v-model="showcelltoast" type="text" :time="800" is-show-mask="true"  :position="middle">正在跳转...</toast>
-    <toast v-model="showAfftoast" type="text" :time="800" is-show-mask="true"  :position="middle" @on-hide="tohome">正在支付中...</toast>
+    <toast v-model="showAfftoast" type="text" :time="800" is-show-mask="true"  :position="middle" @on-hide="toOrderMsg">正在支付中...</toast>
     <toast v-model="showtoast" type="text" :time="800" is-show-mask="true"  :position="middle">支付完成</toast>
   </div>
 </div>
@@ -95,7 +100,8 @@ export default {
       return {
         address:{
           message:'地址详情',
-          allads:0,
+          order_name:"小宝",
+          order_pho:12345678945
         },
         showMoreAds:false,
         adsList:[{
@@ -144,21 +150,25 @@ export default {
         this.showtoast = !this.showtoast;
       }, 1000);
     },
-    tohome(){
+    toOrderMsg(){
       //将订单信息存入数据库，跳转订单详情 
       setTimeout(() => {
-        this.$router.push({ path: '/home'})
+        this.$router.push({ path: '/order-msg'})
       }, 1000);
     }
   },
   created(){
     bus.$on("orderMessage",message =>{
-      console.log(message)
       this.order = message;
     })
   },
   beforeDestroy () {
-    bus.$off("orderMessage",this.order)
+    bus.$off("orderMessage",this.order);
+    this.order.option_way = this.option;
+    this.order.order_ads = this.address;
+    this.order.is_option = true;
+    this.order.order_time = new Date();
+    bus.$emit('orderMessage',this.order)
   }
 }
 </script>
@@ -172,6 +182,11 @@ export default {
         float: right;
         color: #0091FF;
       }
+      .ads-box{
+          display: flex;
+          justify-content: space-between;
+          color: #888;
+        }
     }
     .ads-list{
       .ads-message{

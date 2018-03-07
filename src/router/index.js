@@ -16,6 +16,8 @@ import Storeorder from "../page/user/store-order.vue"
 import Login from "../page/user/login.vue"
 import ShopAds from '../page/user/shop-ads.vue'
 import AddAds from "../page/user/add-ads.vue"
+import MineMsg from "../page/user/mine-msg.vue"
+import OrderMsg from '../page/user/order-msg.vue'
 
 // 配置路由规则
 const routes = [
@@ -32,6 +34,10 @@ const routes = [
     component:Order
   },
   {
+    path:"/order",
+    component:OrderMsg
+  },
+  {
     path:"/home/store/:id",
     name:"store",
     component:Store
@@ -45,6 +51,10 @@ const routes = [
     component:Storeorder
   },
   {
+    path:"/order-msg",
+    component:OrderMsg
+  },
+  {
     path:"/login",
     component:Login
   },
@@ -55,6 +65,10 @@ const routes = [
   {
     path:"/mine/add-ads",
     component:AddAds
+  },
+  {
+    path:"/mine/mine-msg",
+    component:MineMsg
   }
 
 ]

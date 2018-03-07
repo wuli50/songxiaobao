@@ -2,7 +2,7 @@
   <div class="user-page">
       <back-header>我的</back-header>
       <div class="header">
-          <router-link class="header-box" to = "/userMsg">
+          <router-link class="header-box" to = "/mine/mine-msg">
               <img src="../../assets/img/mine/头像 (1).png" alt="">
               <div class="header-main right">
                   <div class="left">
