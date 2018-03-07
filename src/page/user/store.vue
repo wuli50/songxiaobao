@@ -2,22 +2,22 @@
     <div class="user-page">
         <header>
             <!-- blur的路径只能是网络路径 -->
-            <blur :blur-amount=15 :url="getImag(Store[0].image_path)" class="hed-box">
+            <blur :blur-amount=15 :url="getImag(Store.image_path)" class="hed-box">
                 <div class="top">
                     <img src="../../assets/img/返回.png" alt="" @click="back">
                 </div>
                 <div class="hed-main">
                     <p class="center">
-                        <img :src="getImag(Store[0].image_path)">
+                        <img :src="getImag(Store.image_path)">
                         <ul class="stor-title right">
-                            <li><span>{{Store[0].name}}</span></li>
+                            <li><span>{{Store.name}}</span></li>
                             <li>
-                                <span>配送时间{{Store[0].piecewise_agent_fee.description}}
+                                <span>配送时间{{Store.opening_hours[0]}}
                                 </span>
                             </li>
                             <li>
-                                <span style="overflow:auto;">
-                                    公告：{{Store[0].promotion_info.slice(0,15)}}
+                                <span style="">
+                                    公告：{{Store.promotion_info.slice(0,18)+"..."}}
                                 </span>
                             </li>
                         </ul>
@@ -26,11 +26,11 @@
                     <div class="hed-actives">
                         <ul>
                             <li>
-                                <span :style="{backgroundColor:'#'+ Store[0].activities[0].icon_color}">
-                                    {{Store[0].activities[0].icon_name}}
+                                <span :style="{backgroundColor:'#'+ Store.activities[0].icon_color}">
+                                    {{Store.activities[0].icon_name}}
                                     </span>
-                                <span>{{Store[0].activities[0].tips}}</span>
-                                <span class="right">{{Store[0].activities.length}}个活动</span>
+                                <span>{{Store.activities[0].tips}}</span>
+                                <span class="right">{{Store.activities.length}}个活动</span>
                                 <div class="clear"></div>
                             </li>
                         </ul>
@@ -72,7 +72,7 @@
                             <!-- 食物 -->
                             <div class="right">
                                 <ul class="class-main">
-                                    <li v-for = "(c,index) in classList">
+                                    <li v-for = "(c,index) in classList">    
                                         <ul>
                                             <li class="classtitle" :id="index">
                                                 <span>{{c.name}}</span>
@@ -94,7 +94,7 @@
                                                         </ul>
                                                         <!-- 数量加减 -->
                                                         <div class="price">
-                                                            <b>￥{{food.specfoods[0].price}}</b><s>${{food.specfoods[0].price*2}}</s>
+                                                            <b>￥{{food.specfoods_price}}</b><s>${{food.specfoods_price*2}}</s>
                                                             <div class="money">
                                                                 <span class="reduce" 
                                                                  v-if = "setcomNum[food.name].num>0"
@@ -120,14 +120,14 @@
                         <div class="store-main" v-show="index == 1" :key = "1">
                             <div class="msg-top"> 
                                 <h2>配送信息</h2>
-                                <p>{{Store[0].piecewise_agent_fee.description}}</p>
+                                <p>{{Store.distribution}}</p>
                             </div>
                             <div class="msg-ati">
                                 <h2>活动与服务</h2>
-                                <span class="right">{{Store[0].activities.length}}个活动</span>
+                                <span class="right">{{Store.activities.length}}个活动</span>
                                 <div class="clear"></div>
                                 <ul class="ati">
-                                    <li v-for = "(act,index) in Store[0].activities">
+                                    <li v-for = "(act,index) in Store.activities">
                                         <span :style="{backgroundColor:'#'+ act.icon_color}">{{act.icon_name}}</span>
                                         <span>{{act.tips}}</span>
                                     </li>
@@ -137,22 +137,22 @@
                                 <ul>
                                     <li>
                                         <h2>店家信息</h2>
-                                        <p v-if = "Store[0].promotion_info">{{Store[0].promotion_info}}</p>
+                                        <p v-if = "Store.promotion_info">{{Store.promotion_info}}</p>
                                         <p v-else>暂无信息</p>
                                     </li>
                                     <li>
                                         <h3>商家电话</h3>
-                                        <span class="right">{{Store[0].phone}}</span>
+                                        <span class="right">{{Store.phone}}</span>
                                         <div class="clear"></div>
                                     </li>
                                     <li>
                                         <h3>地址</h3>
-                                        <span class="right">{{Store[0].address}}</span>
+                                        <span class="right">{{Store.address}}</span>
                                         <div class="clear"></div>
                                     </li>
                                     <li>
                                         <h3>评分</h3>
-                                        <span class="right">{{Store[0].opening_hours[0]}}</span>
+                                        <span class="right">{{Store.opening_hours[0]}}</span>
                                         <div class="clear"></div>
                                     </li>
                                 </ul>
@@ -172,7 +172,7 @@
             </div>
             <div class="allmoney">
                 <p>￥<span>{{allprice.toFixed(2)}}</span></p>
-                <p>{{Store[0].piecewise_agent_fee.description}}</p>
+                <p>{{Store.description}}</p>
             </div>
             <div class="payment">
                 <span v-if="allprice == 0">购物车空空~</span>
@@ -295,25 +295,21 @@ export default {
     },
     // 获取店家信息
     getshortList() {
+      var that=this;
       this.$http
-        .get(
-          "/ele/shopping/restaurants?latitude=26.048036&longitude=119.221893&offset=10&limit=20&extras[]=activities&terminal=h5"
-        )
+        .get("http://127.0.0.1:5000/user/store-msg?id="+this.storeId)
         .then(data => {
-          // 剪切选取需要的需要的数据.slice(0,2)
-          var ary = data.body;
-          this.Store = ary.filter((value, index) => {
-            return value.id == this.storeId;
-          });
+          // console.log(data.body[0])
+          that.Store = data.body[0];
         });
     },
     // 获取菜单数据
     getClasslist() {
       this.$http
-        .get("/ele/shopping/v2/menu?restaurant_id=" + this.storeId)
+        .get("http://127.0.0.1:5000/user/store-foods?id=" + this.storeId)
         .then(data => {
-          // console.log(data.body.slice(0,2))
-          this.classList = data.body.slice(0, 5);
+          // console.log(data.body)
+          this.classList = data.body;
           this.classList.forEach((value, index) => {
             value.foods.forEach((value, index) => {
               var foodName = value.name;
@@ -322,7 +318,7 @@ export default {
               // this.$set(this.comNum,foodName,0)
               this.$set(this.comNum, foodName, {
                 num: 0,
-                price: value.specfoods[0].price
+                price: value.specfoods_price
               });
             });
           });
@@ -375,6 +371,7 @@ export default {
     window.removeEventListener("scroll", this.handleScroll);
   },
   beforeDestroy (){
+    // 组件卸载前设置使用bus传递值
     var orderList = [];
     for(var i in this.orderList){
       var ordermsg = {}
@@ -384,10 +381,14 @@ export default {
       orderList.push(ordermsg);
     }
     var data = {}
-    data.storeName = this.Store[0].name;
+    data.storeName = this.Store.name;
     data.orderMsg = orderList;
+    data.storeId=this.Store.id;
+    data.storeImage=this.Store.image_path;
+    data.allprice=this.allprice;
+    data.allNum = this.allNum
     console.log(data)
-    eventBus.$emit("orderMessage",data)
+    bus.$emit("orderMessage",data)
   }
 };
 </script>

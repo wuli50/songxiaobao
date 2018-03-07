@@ -15,17 +15,54 @@ db.on('error',function(){
 })
 // 创建 Schema 构造函数
 var Schema = mongoose.Schema;
+// 创建 store-msg 表结构
 var storeMsgSchema = new Schema({
+    id:Number,
 	name: String,
-	age: Number,
-	gender: Boolean,
+	address: String,
+	image_path: String,
+	is_new: Boolean,
 	phone: String,
-	email: String,
-	detail: String,
-	createTime: Date
-},{collection: 'song-msg'});
+	opening_hours: Array,
+    promotion_info: String,
+    // 评分
+    rating:Number,
+    // 月售量
+    recent_order_num:Number,
+    // 配送费
+    distribution:String,
+    activities:[
+        {
+            icon_color:String,
+            icon_name:String,
+            tips:String
+        }
+    ]
+},{collection: 'store-msg'});
 
+var storeFoodSchema = new Schema({
+    // 备注
+    description:String,
+    // 分类名称
+    name:String,
+    foods:[{
+        name:String,
+        // 招牌？
+        is_essential:Boolean,
+        image_path:String,
+        // 月售
+        month_sales:Number,
+        // 价格
+        specfoods_price:Number
+    }],
+    restaurant_object_id:{type:Schema.Types.ObjectId,ref:'StoreMsg'}
+},{collection: 'store-food'})
+// 一个构造对象
 var StoreMsg = mongoose.model('StoreMsg',storeMsgSchema);
+var StoreFood = mongoose.model('StoreFood',storeFoodSchema);
 
 // 导出一个构造方法
-module.exports = StoreMsg;
+module.exports = {
+    StoreMsg:StoreMsg,
+    StoreFood:StoreFood
+};

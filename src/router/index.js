@@ -1,8 +1,7 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 Vue.use(Router)
-// 设置eventbus来传值
-window.eventBus = new Vue()
+
 
 // import Hello from '@/components/Hello'
 

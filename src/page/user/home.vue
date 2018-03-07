@@ -1,7 +1,5 @@
 <template>
     <div class="user-page">
-        <!-- 存储原始数据 -->
-        <button @click="yuanshi">点我</button>
         <!-- 顶部 -->
         <nav>
             <div class="top">
@@ -116,8 +114,8 @@
                                 <ul class="main" >
                                     <li class="main1">
                                         <div class="left">
-                                            <span v-if="sto.is_premium">品牌</span>
-                                            {{sto.name.substr(0,10)+'...'}}</div>
+                                            <span v-if="sto.is_new">新店</span>
+                                            {{sto.name}}</div>
                                         <div class="right">
                                             <span>票</span>
                                         </div>
@@ -132,7 +130,7 @@
                                     </li>
                                     <li class="main3">
                                         <div class="left">￥0起送 |
-                                            <span>{{sto.piecewise_agent_fee.description}}</span></div>
+                                            <span>{{sto.distribution}}</span></div>
                                         <div class="right">30分钟</div>
                                         <div class="clear"></div>
                                     </li>
@@ -208,10 +206,11 @@ export default {
       },
     //   获取推荐商家
       getshortList(){
-          this.$http.get('/ele/shopping/restaurants?latitude=26.048036&longitude=119.221893&offset=10&limit=20&extras[]=activities&terminal=h5')
+          this.$http.get('http://127.0.0.1:5000/user/store-msg')
             .then((data)=>{
                 // 剪切选取需要的需要的数据
-                this.storeList = data.body.slice(0,20);
+                console.log(data.body)
+                this.storeList = data.body;
             })
       },
     //   拼接图片路径

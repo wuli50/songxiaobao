@@ -10,7 +10,7 @@
     <div class="login-form">
         <!-- 登录 -->
         <div v-if="islogin==0">
-            <form @submit.prevent="submitLogin">
+            <form @submit.prevent = "submitLogin">
                 <group class="login-group"
                 title="已经注册了的小宝这里登录勒" label-width="20vw" label-margin-right="5vw" label-align="justify">
                     <x-input title="用户名" v-model="userLogin.name" :required="true"></x-input>
@@ -28,6 +28,7 @@
                     <x-input title="密码" type="password" placeholder="密码必须4-8位" :min="min" :max="max"  v-model="userJoin.password1"></x-input>
                     <x-input title="确认密码" type="password" placeholder="请再次输入密码" v-model="userJoin.password2" @on-blur = "pawConfirme"></x-input>
                     <x-address title="地址选择" v-model="userJoin.addressValue" raw-value :list="addressData" value-text-align="left" label-align="justify"></x-address>
+                    <x-textarea title="详细信息" placeholder="请填写地址详细信息" :show-counter="false" :rows="3" :required="true"></x-textarea>
                 </group>
                 <x-button action-type="submit" :gradients="['#1D62F0', '#19D5FD']">注册</x-button>
             </form>
@@ -41,7 +42,7 @@
 </template>
 <script>
 import backHeader from "../../components/backHeader"
-import { ButtonTab, ButtonTabItem,Group,XInput,XNumber,XAddress,XButton,ChinaAddressData,AlertModule,Alert} from 'vux'
+import { ButtonTab, ButtonTabItem,Group,XInput,XNumber,XAddress,XButton,ChinaAddressData,AlertModule,Alert,XTextarea} from 'vux'
 export default {
     name:"login",
     data(){
@@ -71,11 +72,11 @@ export default {
     },
     components:{
         backHeader,
-        ButtonTab,ButtonTabItem,Group,XInput,XNumber,XAddress,XButton,ChinaAddressData,AlertModule,Alert
+        ButtonTab,ButtonTabItem,Group,XInput,XNumber,XAddress,XButton,ChinaAddressData,AlertModule,Alert,XTextarea
     },
     // 方法
     methods:{
-        submitLogin:function(){
+        submitLogin(){
             var that = this;
             var formData = JSON.stringify(this.userLogin);
             console.log(formData);
@@ -87,8 +88,12 @@ export default {
                 that.alert.content = "密码不能为空"
             }else{
                 // 发送请求 判断是否可以登录
-            }
+                this.$http.post('http://127.0.0.1:5000/user/login',{
+                    data:formData
+                }).then({
 
+                })
+            }
         },
         pawConfirme:function(){
             var that = this;
@@ -96,6 +101,17 @@ export default {
                 that.showAlert = true;
                 that.alert.content = "两次密码不一致，你要不在确认一哈"
             }
+        },
+        // 登录
+        submitJoin(){
+            var that = this;
+            var formData = JSON.stringify(this.userJoin);
+            console.log(formData)
+            this.$http.post('http://127.0.0.1:5000/user/join',{
+                data:formData
+            }).then(data=>{
+
+            })
         }
     }
     

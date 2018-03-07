@@ -47,15 +47,15 @@
         <span class="foodprice">{{order.price}}</span>
       </li>
       <li class="order-card-title">
-        <span></span>
-        <span></span>
-        <span>总价</span>
+        <span class="food"></span>
+        <span>{{order.allNum}}</span>
+        <span class="foodprice">￥{{order.allprice.toFixed(2)}}</span>
       </li>
     </ul>
   </div>
 
   <div class="footer">
-    <div class="allprice">10000.00</div>
+    <div class="allprice">￥{{order.allprice.toFixed(2)}}</div>
     <div class="buyfood">
         <p @click="buyConfirm = !buyConfirm">确认支付</p>
     </div>
@@ -68,17 +68,27 @@
         on-hide	 	弹窗隐藏时触发 -->
     <confirm v-model="buyConfirm"
     :title="确认付款"
-    @on-cancel="onCancel">
-      <p style="text-align:center;">你将支付{{总价}},确认付款么？</p>
+    @on-cancel="callOredrConfirm = !callOredrConfirm"
+    @on-confirm="affOrder">
+      <p style="text-align:center;">你将支付{{order.allprice.toFixed(2)}},确认付款么？</p>
     </confirm>
+    <confirm v-model="callOredrConfirm"
+    :title="取消订单"
+    @on-confirm="onconfirm">
+      <p style="text-align:center;">您将取消订单，确定么？？？？</p>
+    </confirm>
+    <toast v-model="showcelltoast" type="text" :time="800" is-show-mask="true"  :position="middle">正在跳转...</toast>
+    <toast v-model="showAfftoast" type="text" :time="800" is-show-mask="true"  :position="middle" @on-hide="tohome">正在支付中...</toast>
+    <toast v-model="showtoast" type="text" :time="800" is-show-mask="true"  :position="middle">支付完成</toast>
   </div>
 </div>
 
  
 </template>
 <script>
+import bus from "../../bus.js";
 import backHeader from "../../components/backHeader"
-import {Card,Popup,Group,PopupRadio,Confirm} from "vux"
+import {Card,Popup,Group,PopupRadio,Confirm,Toast} from "vux"
 export default {
   name:"store-order",
   data(){
@@ -105,26 +115,50 @@ export default {
           '支付宝','微信'
         ],
         // 确认付款
-        buyConfirm:false
-
+        buyConfirm:false,
+        showcelltoast:false,
+        showAfftoast:false,
+        showtoast:false,
+        callOredrConfirm:false
       }
   },
     // 注册组件
   components:{
     backHeader,
-    Card,Popup,Group,PopupRadio,Confirm
+    Card,Popup,Group,PopupRadio,Confirm,Toast
   },
   methods:{
-
+    // 取消订单
+    onconfirm(){
+      var that = this;
+      this.showtoast = !this.showtoast;
+      setTimeout(() => {
+        that.$router.push({ path: '/home/store/'+ that.order.storeId})
+      }, 1000);
+    },
+    // 确认订单
+    affOrder(){
+      var that = this;
+      this.showAfftoast = !this.showAfftoast;
+      setTimeout(() => {
+        this.showtoast = !this.showtoast;
+      }, 1000);
+    },
+    tohome(){
+      //将订单信息存入数据库，跳转订单详情 
+      setTimeout(() => {
+        this.$router.push({ path: '/home'})
+      }, 1000);
+    }
   },
   created(){
-    eventBus.$on("orderMessage",message =>{
+    bus.$on("orderMessage",message =>{
       console.log(message)
       this.order = message;
     })
   },
   beforeDestroy () {
-    eventBus.$off("orderMessage",this.order)
+    bus.$off("orderMessage",this.order)
   }
 }
 </script>
