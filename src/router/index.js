@@ -18,6 +18,10 @@ import ShopAds from '../page/user/shop-ads.vue'
 import AddAds from "../page/user/add-ads.vue"
 import MineMsg from "../page/user/mine-msg.vue"
 import OrderMsg from '../page/user/order-msg.vue'
+import AdminLogin from "../page/admin/login.vue"
+import AdminHome from "../page/admin/home.vue"
+import AdminStoreMsg from '../page/admin//store/store-msg.vue'
+// import AdminStoreMsg from '../page/admin/store-food.vue'
 
 // 配置路由规则
 const routes = [
@@ -26,15 +30,11 @@ const routes = [
     component: Home
   },
   {
-    path:"/mine",
-    component:Mine
-  },
-  {
     path:"/order",
     component:Order
   },
   {
-    path:"/order",
+    path:"/order/oreder-msg",
     component:OrderMsg
   },
   {
@@ -51,12 +51,12 @@ const routes = [
     component:Storeorder
   },
   {
-    path:"/order-msg",
-    component:OrderMsg
-  },
-  {
     path:"/login",
     component:Login
+  },
+  {
+    path:"/mine",
+    component:Mine
   },
   {
     path:"/mine/shop-ads",
@@ -69,7 +69,21 @@ const routes = [
   {
     path:"/mine/mine-msg",
     component:MineMsg
-  }
+  },
+  // 管理员
+  {
+    path:"/admin/login",
+    component:AdminLogin
+  },
+  {
+    path: '/admin',
+    component: AdminHome,
+    name: '店铺详情',
+    iconCls: 'el-icon-message',//图标样式class
+    children: [
+        { path: '/admin/store-msg', component: AdminStoreMsg, name: '店铺菜品详情', hidden: true },
+    ]
+},
 
 ]
 

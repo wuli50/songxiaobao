@@ -4,6 +4,10 @@ import Vue from 'vue'
 // 路由
 import router from './router'
 
+// 导入element
+import ElementUI from "element-ui"
+import 'element-ui/lib/theme-chalk/index.css';
+
 // 根组件
 import App from './App'
 import VueResource from "vue-resource"
@@ -13,11 +17,14 @@ import $ from 'jquery'
 // 导入bootstar 实现滚动监听
 import "../node_modules/bootstrap/dist/js/bootstrap.js"
 
+
+
 Vue.config.productionTip = false
 // 插入路由插件
 Vue.use(VueResource);
+Vue.use(ElementUI)
 // 设置默认路径
-router.push('/home')
+router.push('/admin')
 
 // 响应式[监听屏幕大小的改变]
 function calcHtml(){

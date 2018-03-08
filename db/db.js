@@ -1,3 +1,4 @@
+
 // 加载模块
 const mongoose = require("mongoose");
 // 用es6中的Promise来取代 mongoose里集成的已经过时的
@@ -57,12 +58,21 @@ var storeFoodSchema = new Schema({
     }],
     restaurant_object_id:{type:Schema.Types.ObjectId,ref:'StoreMsg'}
 },{collection: 'store-food'})
+
+var userMsgSchema = new Schema({
+    id:Number,
+    name:String,
+    paw:String,
+    phone:String
+},{collection: "user-msg"})
 // 一个构造对象
 var StoreMsg = mongoose.model('StoreMsg',storeMsgSchema);
 var StoreFood = mongoose.model('StoreFood',storeFoodSchema);
+var UserMsg = mongoose.model('UserMsg',userMsgSchema);
 
 // 导出一个构造方法
 module.exports = {
     StoreMsg:StoreMsg,
-    StoreFood:StoreFood
+    StoreFood:StoreFood,
+    UserMsg:UserMsg
 };

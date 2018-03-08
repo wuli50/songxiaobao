@@ -256,22 +256,6 @@ export default {
             'scrollTop' : '0'
         },500)
     },
-    yuanshi(){
-        var that = this;
-        this.$http.get('/ele/shopping/restaurants?latitude=26.092946&longitude=119.303522&offset=10&limit=20&extras[]=activities&terminal=h5')
-            .then((data)=>{
-                // 剪切选取需要的需要的数据
-                var data = data.body.slice(0,1);
-                console.log(data);
-                that.$http.post("http://127.0.0.1:5000/yuanshi",{
-                    data:data
-                })
-                .then((data)=>{
-                    console.log(data)
-                })
-            })
-        
-    }
   },
   created(){
       bus.$emit('show-bar',true)

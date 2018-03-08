@@ -24,11 +24,10 @@
             <form @submit.prevent="submitJoin">
                 <group class="join-group"
                 title="注册一下加入我们" label-width="20vw" label-margin-right="5vw" label-align="justify">
-                    <x-input title="用户名" v-model="userJoin.name" :min="min" :max="max" placeholder="用户名必须4-8位"></x-input>
-                    <x-input title="密码" type="password" placeholder="密码必须4-8位" :min="min" :max="max"  v-model="userJoin.password1"></x-input>
+                    <x-input title="用户名" v-model="userJoin.name" :min="min" :max="max" placeholder="用户名必须2-8位"></x-input>
+                    <x-input title="密码" type="password" placeholder="密码必须2-8位" :min="min" :max="max"  v-model="userJoin.password1"></x-input>
                     <x-input title="确认密码" type="password" placeholder="请再次输入密码" v-model="userJoin.password2" @on-blur = "pawConfirme"></x-input>
-                    <x-address title="地址选择" v-model="userJoin.addressValue" raw-value :list="addressData" value-text-align="left" label-align="justify"></x-address>
-                    <x-textarea title="详细信息" placeholder="请填写地址详细信息" :show-counter="false" :rows="3" :required="true"></x-textarea>
+                    <x-input title="电话" v-model="userJoin.phone" placeholder="输入手机号" is-type="china-mobile"></x-input>
                 </group>
                 <x-button action-type="submit" :gradients="['#1D62F0', '#19D5FD']">注册</x-button>
             </form>
@@ -42,7 +41,8 @@
 </template>
 <script>
 import backHeader from "../../components/backHeader"
-import { ButtonTab, ButtonTabItem,Group,XInput,XNumber,XAddress,XButton,ChinaAddressData,AlertModule,Alert,XTextarea} from 'vux'
+import { ButtonTab, ButtonTabItem,Group,XInput,XNumber,XAddress,XButton,ChinaAddressData,AlertModule,Alert,XTextarea,cookie} from 'vux'
+import { setTimeout } from 'timers';
 export default {
     name:"login",
     data(){
@@ -50,12 +50,12 @@ export default {
             islogin:0,
             name:"小宝",
             max:8,
-            min:4,
+            min:2,
             userJoin:{
                 name:"小宝",
                 password1:"",
                 password2:"",
-                addressValue:['福建省', '福州市', '台江区'],
+                phone:'',
             },
             userLogin:{
                 name:"",
@@ -76,6 +76,7 @@ export default {
     },
     // 方法
     methods:{
+        // 登录
         submitLogin(){
             var that = this;
             var formData = JSON.stringify(this.userLogin);
@@ -90,8 +91,20 @@ export default {
                 // 发送请求 判断是否可以登录
                 this.$http.post('http://127.0.0.1:5000/user/login',{
                     data:formData
-                }).then({
-
+                }).then(data=>{
+                    console.log(data)
+                    if(data.body.state == 0){
+                        that.showAlert = true;
+                        that.alert.content = data.body.message
+                    }else{
+                        that.showAlert = true;
+                        that.alert.content = "登录成功";
+                        that.alert.title = "赶紧去选购吧"
+                        cookie.set('username', that.userLogin.name);
+                        setTimeout(function(){
+                            that.$router.push({ path: '/home'})
+                        },1000)
+                    }
                 })
             }
         },
@@ -102,7 +115,7 @@ export default {
                 that.alert.content = "两次密码不一致，你要不在确认一哈"
             }
         },
-        // 登录
+        // 注册
         submitJoin(){
             var that = this;
             var formData = JSON.stringify(this.userJoin);
@@ -110,10 +123,26 @@ export default {
             this.$http.post('http://127.0.0.1:5000/user/join',{
                 data:formData
             }).then(data=>{
-
+                console.log(data)
+                if(data.body.state == 0){
+                    that.showAlert = true;
+                    that.alert.content = data.body.message
+                }else{
+                    that.showAlert = true;
+                    that.alert.content = "注册成功";
+                    that.alert.title = "赶紧去选购吧"
+                    cookie.set('username', that.userJoin.name);
+                    setTimeout(function(){
+                        that.$router.push({ path: '/home'})
+                    },1000)
+                    
+                }
             })
         }
-    }
+    },
+    created(){
+        
+    }    
     
 }
 </script>
