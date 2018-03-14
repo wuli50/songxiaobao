@@ -24,7 +24,7 @@ Vue.config.productionTip = false
 Vue.use(VueResource);
 Vue.use(ElementUI)
 // 设置默认路径
-router.push('/admin')
+router.push('/home')
 
 // 响应式[监听屏幕大小的改变]
 function calcHtml(){

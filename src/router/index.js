@@ -78,10 +78,10 @@ const routes = [
   {
     path: '/admin',
     component: AdminHome,
-    name: '店铺详情',
+    name: '管理系统首页',
     iconCls: 'el-icon-message',//图标样式class
     children: [
-        { path: '/admin/store-msg', component: AdminStoreMsg, name: '店铺菜品详情', hidden: true },
+        { path: '/admin/store-msg', component: AdminStoreMsg, name: '店铺信息详情', hidden: true },
     ]
 },
 

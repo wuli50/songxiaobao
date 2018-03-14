@@ -7,7 +7,7 @@
 					<el-input v-model="filters.name" placeholder="店名"></el-input>
 				</el-form-item>
 				<el-form-item>
-					<!-- <el-button type="primary" v-on:click="getUsers">查询</el-button> -->
+					<el-button type="primary" @click="findStore">查询</el-button>
 				</el-form-item>
 				<el-form-item>
 					<el-button type="primary" @click="handleAdd">新增</el-button>
@@ -62,12 +62,21 @@
 
 		<!--编辑界面-->
 		<el-dialog title="编辑" :visible.sync="editFormVisible" :close-on-click-modal="false">
-			<el-form :model="editForm" label-width="80px" :rules="editFormRules" ref="editForm">
+			<el-form :model="editForm" label-width="80px" ref="editForm">
 				<el-form-item label="店名" prop="name">
 					<el-input v-model="editForm.name" auto-complete="off"></el-input>
 				</el-form-item>
-				<el-form-item label="新店" prop="delivery">
-					<!-- <el-switch v-model=""></el-switch> -->
+				<el-form-item label="地址" prop="address">
+					<el-input v-model="editForm.address"></el-input>
+				</el-form-item>
+				<el-form-item label="公告" prop="promotion_info">
+					<el-input type="textarea" v-model="editForm.promotion_info"></el-input>
+				</el-form-item>
+				<el-form-item label="电话" prop="phone">
+					<el-input v-model="editForm.phone"></el-input>
+				</el-form-item>
+				<el-form-item label="新店" prop="is_new">
+					<el-switch v-model="editForm.is_new"></el-switch>
 				</el-form-item>
 			</el-form>
 			<div slot="footer" class="dialog-footer">
@@ -77,25 +86,22 @@
 		</el-dialog>
 
 		<!--新增界面-->
-		<el-dialog title="新增" v-model="addFormVisible" :close-on-click-modal="false">
-			<el-form :model="addForm" label-width="80px" :rules="addFormRules" ref="addForm">
-				<el-form-item label="姓名" prop="name">
+		<el-dialog title="新增" :visible.sync="addFormVisible" :close-on-click-modal="false">
+			<el-form :model="addForm" label-width="80px" ref="addForm">
+				<el-form-item label="店名" prop="name">
 					<el-input v-model="addForm.name" auto-complete="off"></el-input>
 				</el-form-item>
-				<el-form-item label="性别">
-					<el-radio-group v-model="addForm.sex">
-						<el-radio class="radio" :label="1">男</el-radio>
-						<el-radio class="radio" :label="0">女</el-radio>
-					</el-radio-group>
+				<el-form-item label="地址" prop="address">
+					<el-input v-model="addForm.address"></el-input>
 				</el-form-item>
-				<el-form-item label="年龄">
-					<el-input-number v-model="addForm.age" :min="0" :max="200"></el-input-number>
+				<el-form-item label="公告" prop="promotion_info">
+					<el-input type="textarea" v-model="addForm.promotion_info"></el-input>
 				</el-form-item>
-				<el-form-item label="生日">
-					<el-date-picker type="date" placeholder="选择日期" v-model="addForm.birth"></el-date-picker>
+				<el-form-item label="电话" prop="phone">
+					<el-input v-model="addForm.phone"></el-input>
 				</el-form-item>
-				<el-form-item label="地址">
-					<el-input type="textarea" v-model="addForm.addr"></el-input>
+				<el-form-item label="新店" prop="is_new">
+					<el-switch v-model="addForm.is_new"></el-switch>
 				</el-form-item>
 			</el-form>
 			<div slot="footer" class="dialog-footer">
@@ -121,36 +127,27 @@
 
 				editFormVisible: false,//编辑界面是否显示
 				editLoading: false,
-				editFormRules: {
-					name: [
-						{ required: true, message: '请输入姓名', trigger: 'blur' }
-					]
-				},
 				//编辑界面数据
 				editForm: {},
 
 				addFormVisible: false,//新增界面是否显示
 				addLoading: false,
-				addFormRules: {
-					name: [
-						{ required: true, message: '请输入姓名', trigger: 'blur' }
-					]
-				},
 				//新增界面数据
 				addForm: {
 					name: '',
-					sex: -1,
-					age: 0,
-					birth: '',
-					addr: ''
+					address: "",
+					promotion_info: "",
+					phone: '',
+					is_new: false
 				}
 
 			}
 		},
 		methods: {
-			//性别显示转换
-			formatSex: function (row, column) {
-				return row.sex == 1 ? '男' : row.sex == 0 ? '女' : '未知';
+			
+			// 查询店铺
+			findStore(){
+
 			},
 			handleCurrentChange(val) {
 				this.page = val;
@@ -160,7 +157,7 @@
 			getStoreMsg() {
 				this.$http.get('http://127.0.0.1:5000/user/store-msg')
                 .then((data)=>{
-                    console.log(data.body)
+                    // console.log(data.body)
                     this.storeList = data.body;
                 })
 			},
@@ -194,20 +191,21 @@
 					data:obj
 				})
                 .then((data)=>{
-					console.log(data.body[0])
+					// console.log(data.body[0])
 					that.editForm = data.body[0];
                 })
 			},
 			//显示新增界面
 			handleAdd: function () {
+				alert('1232')
 				this.addFormVisible = true;
 				this.addForm = {
 					name: '',
-					sex: -1,
-					age: 0,
-					birth: '',
-					addr: ''
-				};
+					address: "",
+					promotion_info: "",
+					phone: '',
+					is_new: false
+				}
 			},
 			//编辑
 			editSubmit: function () {
