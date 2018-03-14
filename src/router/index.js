@@ -18,10 +18,12 @@ import ShopAds from '../page/user/shop-ads.vue'
 import AddAds from "../page/user/add-ads.vue"
 import MineMsg from "../page/user/mine-msg.vue"
 import OrderMsg from '../page/user/order-msg.vue'
+
 import AdminLogin from "../page/admin/login.vue"
 import AdminHome from "../page/admin/home.vue"
 import AdminStoreMsg from '../page/admin/store/store-msg.vue'
-import AdminStoreFood from '../page/admin/store-food.vue'
+import AdminStoreFood from '../page/admin//store/store-food.vue'
+
 import StoreLogin from "../page/store/login.vue"
 import StoreHome from "../page/store/home.vue"
 import StoreMsg from '../page/store/store-msg.vue'
