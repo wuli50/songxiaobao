@@ -21,7 +21,7 @@ import OrderMsg from '../page/user/order-msg.vue'
 import AdminLogin from "../page/admin/login.vue"
 import AdminHome from "../page/admin/home.vue"
 import AdminStoreMsg from '../page/admin/store/store-msg.vue'
-// import AdminStoreMsg from '../page/admin/store-food.vue'
+import AdminStoreFood from '../page/admin/store-food.vue'
 import StoreLogin from "../page/store/login.vue"
 import StoreHome from "../page/store/home.vue"
 import StoreMsg from '../page/store/store-msg.vue'
@@ -87,6 +87,7 @@ const routes = [
     iconCls: 'el-icon-message',//图标样式class
     children: [
         { path: '/admin/store-msg', component: AdminStoreMsg, name: '店铺基本信息', hidden: true },
+        { path: '/admin/store-food', component: AdminStoreFood, name: '店铺食物信息', hidden: true },
       ]
     },
     // 店家
