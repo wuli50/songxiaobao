@@ -23,6 +23,8 @@ import AdminLogin from "../page/admin/login.vue"
 import AdminHome from "../page/admin/home.vue"
 import AdminStoreMsg from '../page/admin/store/store-msg.vue'
 import AdminStoreFood from '../page/admin//store/store-food.vue'
+import AdminUserMsg from '../page/admin/user/user-msg.vue'
+import AdminUserOrder from '../page/admin/user/user-order.vue'
 
 import StoreLogin from "../page/store/login.vue"
 import StoreHome from "../page/store/home.vue"
@@ -90,6 +92,8 @@ const routes = [
     children: [
         { path: '/admin/store-msg', component: AdminStoreMsg, name: '店铺基本信息', hidden: true },
         { path: '/admin/store-food', component: AdminStoreFood, name: '店铺食物信息', hidden: true },
+        { path: '/admin/user-msg', component: AdminUserMsg, name: '用户基本信息', hidden: true },
+        { path: '/admin/user-order', component: AdminUserOrder, name: '用户订单信息', hidden: true },
       ]
     },
     // 店家

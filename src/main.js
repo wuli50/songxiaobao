@@ -17,8 +17,6 @@ import $ from 'jquery'
 // 导入bootstar 实现滚动监听
 import "../node_modules/bootstrap/dist/js/bootstrap.js"
 
-
-
 Vue.config.productionTip = false
 // 插入路由插件
 Vue.use(VueResource);

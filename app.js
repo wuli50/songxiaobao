@@ -1,12 +1,17 @@
 var express = require('express');
 var bodyParser = require("body-parser");
 var app = express();
+var formidable = require('formidable')
+
 app.use(bodyParser.urlencoded({
     extended:true
 }));
 // 数据库
 var fs = require("fs");
 var Song = require('./db/db.js');
+var multer = require('multer');
+var path=require('path');
+
 var StoreMsg = Song.StoreMsg;
 var StoreFood = Song.StoreFood;
 var UserMsg = Song.UserMsg;
@@ -47,7 +52,20 @@ app.options('/user/find-store-msg',(req,res)=>{
         message:'ok'
     })
 })
-
+app.options('/add-store-image',(req,res)=>{
+    res.set('Access-Control-Allow-Origin','*')
+    res.set('Access-Control-Allow-Headers','Content-Type,Access-Token')
+    res.status(200).json({
+        message:'ok'
+    })
+})
+app.options('/find-user-msg',(req,res)=>{
+    res.set('Access-Control-Allow-Origin','*')
+    res.set('Access-Control-Allow-Headers','Content-Type,Access-Token')
+    res.status(200).json({
+        message:'ok'
+    })
+})
 // 用户获取店铺信息
 app.get('/user/store-msg',(req,res)=>{
     res.set('Access-Control-Allow-Origin','*')
@@ -200,6 +218,70 @@ app.post('/user/find-store-msg',(req,res)=>{
     req.on("end",function(){
     })
 })
+
+// 上传图片
+app.post('/add-store-image',(req,res)=>{
+    res.set('Access-Control-Allow-Origin','*')
+    var uploadDir='./src/assets/image';
+    var form = new formidable.IncomingForm();
+  //文件的编码格式
+  form.encoding='utf-8';
+  //文件的上传路径
+  form.uploadDir=uploadDir;
+  //文件的后缀名
+  form.extensions=true;
+  //文件的大小限制
+  form.maxFieldsSize = 2 * 1024 * 1024;
+  form.parse(req, function (err, fields, files){
+      //fields上传的string类型的信息
+        //files为上传的文件
+    var file = files.image_path;
+    var oldpath = path.normalize(file.path);
+    console.log(oldpath)
+    var newfilename = file.name;
+    var newpath = uploadDir + newfilename;
+    console.log(newpath)
+    fs.rename(oldpath,newpath,function(err){
+
+    })
+  })
+})
+
+// 搜索用户信息
+app.get('/find-user-msg',(req,res)=>{
+    res.set('Access-Control-Allow-Origin','*')
+    if(req.query.name == 'noname'){
+        UserMsg.find({},function(err,data){
+            if(!err){
+                res.status(200).json({
+                    data:data,
+                    state:1
+                })
+            }else{
+                res.status(200).json({
+                    message:"数据库读取失败",
+                    state:0
+                })
+            }
+        })
+    }else{
+        UserMsg.find({name:req.query.name},function(err,data){
+            if(!err){
+                res.status(200).send({
+                    data:data,
+                    state:1
+                })
+            }else{
+                res.status(200).json({
+                    message:"数据库读取失败",
+                    state:0
+                })
+            }
+        })
+    }
+    
+})
+
 
 
 app.listen('5000',()=>{
