@@ -52,7 +52,7 @@ app.options('/user/find-store-msg',(req,res)=>{
         message:'ok'
     })
 })
-app.options('/add-store-image',(req,res)=>{
+app.options('/add-store-msg',(req,res)=>{
     res.set('Access-Control-Allow-Origin','*')
     res.set('Access-Control-Allow-Headers','Content-Type,Access-Token')
     res.status(200).json({
@@ -220,30 +220,81 @@ app.post('/user/find-store-msg',(req,res)=>{
 })
 
 // 上传图片
-app.post('/add-store-image',(req,res)=>{
+app.post('/add-store-msg',(req,res)=>{
     res.set('Access-Control-Allow-Origin','*')
     var uploadDir='./src/assets/image';
     var form = new formidable.IncomingForm();
-  //文件的编码格式
-  form.encoding='utf-8';
-  //文件的上传路径
-  form.uploadDir=uploadDir;
-  //文件的后缀名
-  form.extensions=true;
-  //文件的大小限制
-  form.maxFieldsSize = 2 * 1024 * 1024;
-  form.parse(req, function (err, fields, files){
+    //文件的编码格式
+    form.encoding='utf-8';
+    //文件的上传路径
+    form.uploadDir=uploadDir;
+    //文件的后缀名
+    form.extensions=true;
+    //文件的大小限制
+    form.maxFieldsSize = 2 * 1024 * 1024;
+    form.parse(req, function (err, fields, files){
       //fields上传的string类型的信息
         //files为上传的文件
+        // name: "",
+        // address: "",
+        // phone: "",
+        // promotion_info: "",
+        // distribution: 0,
+        // type: [],
+        // // 是否审核店铺
+        // is_aduit_msg: false,
+        // is_aduit_food:false,
+       	// image_path: ""
+    var name=fields.name;
+    var address = fields.address;
+    var phone = fields.phone;
+    var promotion_info = fields.promotion_info;
+    var distribution = fields.distribution;
+    var type = fields.type;
+    var is_aduit_msg = fields.is_aduit_msg;
+    var is_aduit_food = fields.is_aduit_food;
     var file = files.image_path;
     var oldpath = path.normalize(file.path);
-    console.log(oldpath)
-    var newfilename = file.name;
-    var newpath = uploadDir + newfilename;
-    console.log(newpath)
-    fs.rename(oldpath,newpath,function(err){
-
+    // console.log(oldpath)
+    var newfilename = name + file.name;
+    var newpath = uploadDir +'store'+ newfilename;
+    // console.log(newpath)
+    var storemsg = new StoreMsg({
+        name: name,
+        address: address,
+        phone: phone,
+        promotion_info: promotion_info,
+        distribution: distribution,
+        type: type,
+        is_aduit_msg: is_aduit_msg,
+        is_aduit_food:is_aduit_food
     })
+    fs.rename(oldpath,newpath,function(err){
+        if(err){
+            res.json({
+                message:"图片存储失败，请重新提交",
+                state:0
+            })
+        }
+        else {
+            storemsg.filePath=newpath;
+            console.log(storemsg)
+            storemsg.save(function(error,data,status){
+                if(!error){
+                    res.json({
+                        message:"提交成功，等待管理员审核",
+                        state:1
+                    })
+                }else{
+                    res.json({
+                        message:"数据存储失败",
+                        state:0
+                    })
+                }
+            });
+            
+        }
+      });
   })
 })
 

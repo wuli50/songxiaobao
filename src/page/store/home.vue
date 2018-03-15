@@ -52,9 +52,16 @@
 					<el-col :span="24" class="content-wrapper">
 						<transition name="fade" mode="out-in">
 							<router-view>
-                                
+								
                             </router-view>
 						</transition>
+						<el-steps :active="active" finish-status="success">
+							<el-step title="完整店铺基本信息">
+								<router-link to = "/store/store-msg">去完成</router-link>
+							</el-step>
+							<el-step title="完善食物信息"></el-step>
+							<el-step title="等待管理员审核"></el-step>
+						</el-steps>
 					</el-col>
 				</div>
 			</section>
@@ -79,7 +86,8 @@ import bus from '../../bus.js'
 					type: [],
 					resource: '',
 					desc: ''
-				}
+				},
+				active: 0
 			}
 		},
 		methods: {

@@ -18,27 +18,17 @@ db.on('error',function(){
 var Schema = mongoose.Schema;
 // 创建 store-msg 表结构
 var storeMsgSchema = new Schema({
-    id:Number,
-	name: String,
-	address: String,
-	image_path: String,
-	is_new: Boolean,
-	phone: String,
-	opening_hours: Array,
+    name: String,
+    address: String,
+    phone: String,
     promotion_info: String,
-    // 评分
-    rating:Number,
-    // 月售量
-    recent_order_num:Number,
-    // 配送费
-    distribution:String,
-    activities:[
-        {
-            icon_color:String,
-            icon_name:String,
-            tips:String
-        }
-    ]
+    distribution: Number,
+    type: Array,
+    is_aduit_msg: Boolean,
+    is_submit_msg:Boolean,
+    is_submit_food:Boolean,
+    is_aduit_food:Boolean,
+    image_path: String
 },{collection: 'store-msg'});
 
 var storeFoodSchema = new Schema({

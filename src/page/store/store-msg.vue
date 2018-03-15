@@ -10,6 +10,9 @@
 			<el-form-item label="店铺电话" prop="phone">
 				<el-input v-model="storeMsg.phone"></el-input>
 			</el-form-item>
+      <el-form-item label="配送费" prop="distribution">
+				<el-input-number v-model="storeMsg.distribution" :step="0.5" :min="0"></el-input-number>
+			</el-form-item>
 			<el-form-item label="店铺性质" prop="type">
 				<el-checkbox-group v-model="storeMsg.type">
 				<el-checkbox label="同事一波" name="type"></el-checkbox>
@@ -24,8 +27,6 @@
 			</el-form-item>
 			<el-form-item label="店铺照片" prop="image_path">
 				<input type="file" name="photo" id="photo" @change="onfilechange">
-				<img :src="storeMsg.image_path" alt="">
-        		<button type="button" @click="submit">确认上传</button>
 			</el-form-item>
 			<el-form-item label="店铺公告" prop="promotion_info">
 				<el-input  type="textarea" v-model="storeMsg.promotion_info"></el-input>
@@ -52,7 +53,8 @@ export default {
         type: [],
         // 是否审核店铺
         is_aduit_msg: false,
-       	image_path: "../../assets/img/nav-icon1-dis@2x.png"
+        is_aduit_food:false,
+       	image_path: ""
       },
       rules: {
         name: [
@@ -62,6 +64,9 @@ export default {
         address: [
           { required: true, message: "请输入店铺地址", trigger: "blur" }
         ],
+        phone:[
+          { required: true, message: "请输入店铺电话", trigger: "blur" }          
+        ],
         type: [
           {
             type: "array",
@@ -69,9 +74,6 @@ export default {
             message: "请至少选择一个店铺性质",
             trigger: "change"
           }
-        ],
-        resource: [
-          { required: true, message: "请选择活动资源", trigger: "change" }
         ],
         promotion_info: [
           { required: true, message: "请填写店铺公告", trigger: "blur" }
@@ -81,37 +83,49 @@ export default {
   },
   methods: {
     submitForm() {
-      var obj = this.storeMsg;
-      console.log(obj);
-      // this.$http.post('http://127.0.0.1:5000/add-store-msg',{
-      // 	data:obj
-      // }).then({
-
-      // })
+      var that = this;
+      var formdata = new FormData();
+      //读取data中所要上传的内容循环append到fordata中
+      for (var key in that.storeMsg) {  
+        if (key) {
+          formdata.append(key, that.storeMsg[key])
+        }
+      }
+      that.$http.post("http://127.0.0.1:5000/add-store-msg", formdata,{
+        headers:{
+                'Content-Type':'multipart/form-data'
+            }
+      }).then((data)=>{
+        console.log(data.body);
+         if (data.body.state == 0) {
+            that.$message.error(data.body.message);
+          } else{
+            that.$message({
+              message: data.body.message,
+              type: 'success'
+            });
+            that.$router.push({ path: '/store'})
+          }
+      })
     },
     resetForm() {},
     // 上传图片
     submit: function() {
+      var formdata = new FormData()
+      formdata.append("image_path", files[0]);
+        
  
     },
     onfilechange: function(e) {
 	  //获取到图片文件
-	  console.log(e.target.files);
-      var files = e.target.files || e.dataTransfer.files;
-	  if (!files.length) 
-	  {
-		  return
-	  }
-	  this.storeMsg.image_path = files[0];
-	  var formdata = new FormData()
-	  formdata.append("image_path", files[0]);
-	  this.$http.post("http://127.0.0.1:5000/add-store-image", formdata,{
-      headers:{
-              'Content-Type':'multipart/form-data'
-          }
-    }).then((data)=>{
-      
-    })
+      console.log(e.target.files);
+        var files = e.target.files || e.dataTransfer.files;
+      if (!files.length) 
+      {
+        return
+      }
+      this.storeMsg.image_path = files[0];
+	  
     }
   },
   mounted() {},
