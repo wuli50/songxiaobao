@@ -28,11 +28,18 @@
 				<!--导航菜单-->
                 <!-- default-openeds:当前激活菜单的index -->
 				<el-menu :default-openeds="[1]">
-                    <el-submenu index="1">
+                    <el-submenu index="0">
                         <template slot="title"><i class="el-icon-message"></i>店铺管理</template>
                         <el-menu-item-group>
                             <el-menu-item index="1-1"><router-link to = "/admin/store-msg">店铺信息管理</router-link></el-menu-item>
-                            <el-menu-item index="1-2"><router-link to = "/login">店铺食物管理</router-link></el-menu-item>
+                            <el-menu-item index="1-2"><router-link to = "/admin/store-food">店铺食物管理</router-link></el-menu-item>
+                        </el-menu-item-group>
+                    </el-submenu>
+					<el-submenu index="1">
+                        <template slot="title"><i class="el-icon-message"></i>用户管理</template>
+                        <el-menu-item-group>
+                            <el-menu-item index="1-1"><router-link to = "/admin/user-msg">用户信息管理</router-link></el-menu-item>
+                            <el-menu-item index="1-2"><router-link to = "/admin/user-order">用户订单管理</router-link></el-menu-item>
                         </el-menu-item-group>
                     </el-submenu>
 					<el-submenu index="2">
