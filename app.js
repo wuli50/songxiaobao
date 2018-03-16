@@ -233,18 +233,6 @@ app.post('/add-store-msg',(req,res)=>{
     //文件的大小限制
     form.maxFieldsSize = 2 * 1024 * 1024;
     form.parse(req, function (err, fields, files){
-      //fields上传的string类型的信息
-        //files为上传的文件
-        // name: "",
-        // address: "",
-        // phone: "",
-        // promotion_info: "",
-        // distribution: 0,
-        // type: [],
-        // // 是否审核店铺
-        // is_aduit_msg: false,
-        // is_aduit_food:false,
-       	// image_path: ""
     var name=fields.name;
     var address = fields.address;
     var phone = fields.phone;

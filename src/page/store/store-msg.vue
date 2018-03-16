@@ -109,15 +109,8 @@ export default {
       })
     },
     resetForm() {},
-    // 上传图片
-    submit: function() {
-      var formdata = new FormData()
-      formdata.append("image_path", files[0]);
-        
- 
-    },
+    //获取到图片文件
     onfilechange: function(e) {
-	  //获取到图片文件
       console.log(e.target.files);
         var files = e.target.files || e.dataTransfer.files;
       if (!files.length) 
@@ -125,7 +118,6 @@ export default {
         return
       }
       this.storeMsg.image_path = files[0];
-	  
     }
   },
   mounted() {},
