@@ -85,7 +85,7 @@
                             <el-switch v-model="food.is_essential"></el-switch>
                         </el-form-item>
                         <el-form-item label="食品照片" prop="image_path">
-                            <input type="file" name="image_path"  @change="onfilechange(index)">
+                            <input type="file" name="image_path"  @change="onfilechange(index,$event)">
                         </el-form-item>
                     </div>
                 </el-card>
@@ -96,7 +96,7 @@
             </el-form>
             <div slot="footer" class="dialog-footer">
                 <el-button @click.native="editFormShow = false">取消</el-button>
-                <el-button type="primary" @click.native="editSubmit" >提交</el-button>
+                <el-button type="primary" @click.native="addSubmit" >提交添加</el-button>
             </div>
         </el-dialog>
     </section>
@@ -165,7 +165,22 @@ export default {
             }
         })
     },
-    editSubmit(){
+    addSubmit(){
+        var that = this;
+      var formdata = new FormData();
+      //读取data中所要上传的内容循环append到fordata中
+      for (var key in that.addFoodForm) {  
+        if (key) {
+          formdata.append(key, that.addFoodForm[key])
+        }
+      }
+      that.$http.post("http://127.0.0.1:5000/store-food/add", formdata,{
+        headers:{
+                'Content-Type':'multipart/form-data'
+            }
+      }).then((data)=>{
+
+      })
 
     },
     // 新增页面
@@ -184,15 +199,15 @@ export default {
         });
     },
     //获取到图片文件
-    onfilechange: function(e,index) {
-      console.log(e);
+    onfilechange: function(index,e) {
       console.log(index)
-        // var files = e.target.files || e.dataTransfer.files;
+      console.log(e)
+        var files = e.target.files || e.dataTransfer.files;
         if (!files.length) 
             {
                 return
             }
-        // this.storeMsg.image_path = files[0];
+        this.addFoodForm.foods[index].image_path = files[0];
     }
   },
   mounted() {

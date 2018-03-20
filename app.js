@@ -1,3 +1,4 @@
+
 var express = require('express');
 var bodyParser = require("body-parser");
 var app = express();
@@ -18,7 +19,7 @@ app.use(cookieParser());
 var StoreMsg = Song.StoreMsg;
 var StoreFood = Song.StoreFood;
 var UserMsg = Song.UserMsg;
-
+// 中间件
 app.use(function (req, res, next){
   res.set('Access-Control-Allow-Origin', '*')
   next();
@@ -73,7 +74,6 @@ app.options('/user-msg/find', (req, res) => {
     message: 'ok'
   })
 })
-// 店家登录
 app.options('/store-msg/login', (req, res) => {
   res.set('Access-Control-Allow-Headers', 'Content-Type,Access-Token')
   res.status(200).json({
@@ -223,17 +223,21 @@ app.post('/user/join', (req, res) => {
 })
 // 管理员编辑店铺信息
 app.post('/store-msg/find', (req, res) => {
-  // var str = "";
-  // req.on("data", function (chunk) {
-  //   str += chunk;
-  //   var data = JSON.parse(str).data;
-  //   console.log(data);
-  //   StoreMsg.find(data, function (err, dbdata) {
-  //     // console.log(dbdata)
-  //     res.status(200).send(dbdata)
-  //   })
-  // })
-  // req.on("end", function () {})
+    console.log(req.body)
+    StoreMsg.find(req.body,(err,data)=>{
+        if(err){
+            res.json({
+                message:"数据读取失败",
+                state:0
+            })
+        }else{
+            res.json({
+                data:data,
+                state:1,
+                message:"数据读取成功"
+            })
+        }
+    })
 })
 
 // 添加店铺
@@ -242,7 +246,7 @@ app.post('/store-msg/add',(req,res)=>{
     if(data.length != 0){
       res.json({
         state:0,
-        message:"此店名已存在"
+        message:"此店名已存在,换一个吧"
       })
     }else{
       var storemsg = new StoreMsg({
@@ -264,7 +268,6 @@ app.post('/store-msg/add',(req,res)=>{
 })
 // 店铺登录
 app.post('/store-msg/login',(req,res)=>{
-  console.log(req.body)
   StoreMsg.find({name:req.body.name},(err,data)=>{
     if(err){
       res.json({
@@ -272,20 +275,32 @@ app.post('/store-msg/login',(req,res)=>{
         state:0
       })
     }else{
-      if(data[0].paw == req.body.paw){
-        var time = new Date(); 
-        time.setHours(time.getHours()+48);
-        // 将数据从服务端 通过响应的方式 缓存到 客户端本地
-        res.cookie('petname',req.body.petname,{expires:time});
-        res.json({
-          message:"登录成功",
-        })
-      }
-      
+        if(data.length == 0){
+            res.json({
+                message:"该店铺不存在，快去注册一个吧",
+                state:0
+            })
+        }else{
+            if(data[0].paw == req.body.paw){
+                var time = new Date(); 
+                time.setHours(time.getHours()+48);
+                res.cookie('storename',req.body.name,{expires:time});
+                res.json({
+                    message:"登录成功",
+                    state:1
+                })
+                
+            }else{
+                res.json({
+                    message:"密码错误",
+                    state:0
+                }) 
+            }
+        }
     }
   })
-
 })
+// 修改店铺信息
 app.post('/store-msg/update', (req, res) => {
   var uploadDir = './src/assets/image';
   var form = new formidable.IncomingForm();
@@ -298,32 +313,26 @@ app.post('/store-msg/update', (req, res) => {
   //文件的大小限制
   form.maxFieldsSize = 2 * 1024 * 1024;
   form.parse(req, function (err, fields, files) {
-    var name = fields.name;
-    var address = fields.address;
-    var phone = fields.phone;
-    var promotion_info = fields.promotion_info;
-    var distribution = fields.distribution;
-    var type = fields.type;
-    var is_aduit_msg = fields.is_aduit_msg;
-    var is_aduit_food = fields.is_aduit_food;
-    StoreMsg.count({}, (err, num) => {
-      var id = num+1;
+      var store = fields;
       var file = files.image_path;
       var oldpath = path.normalize(file.path);
-      var newfilename = name + id + '.jpg';
+      var newfilename = fields.name + id + '.jpg';
       var newpath = uploadDir + '/store' + newfilename;
-      // console.log(newpath)
-      var storemsg = new StoreMsg({
-        id:id,
-        name: name,
-        address: address,
-        phone: phone,
-        promotion_info: promotion_info,
-        distribution: distribution,
-        type: type,
-        is_aduit_msg: is_aduit_msg,
-        is_aduit_food: is_aduit_food
-      })
+    StoreMsg.count({}, (err, num) => {
+      var id = num+1;
+      var storemsg = {
+        id:store.id,
+        name: store.name,
+        address: store.address,
+        phone: store.phone,
+        promotion_info: store.promotion_info,
+        distribution: store.distribution,
+        type: store.type,
+        is_aduit_msg: store.is_aduit_msg,
+        is_submit_msg:true,
+        is_submit_food:false,
+        is_aduit_food:false
+      }
       fs.rename(oldpath, newpath, function (err) {
         if (err) {
           res.json({
@@ -332,20 +341,19 @@ app.post('/store-msg/update', (req, res) => {
           })
         } else {
           storemsg.image_path = newpath;
-          storemsg.save(function (error, data, status) {
-            if (!error) {
-              res.json({
-                message: "提交成功，等待管理员审核",
-                state: 1
-              })
-            } else {
-              res.json({
-                message: "数据存储失败",
-                state: 0
-              })
-            }
-          });
-
+          StoreMsg.update({name:storemsg.name},storemsg,(err)=>{
+              if(err){
+                res.json({
+                    state:0,
+                    message:"数据修改失败"
+                })
+              }else{
+                res.json({
+                    state:1,
+                    message:"数据修改成功"
+                })
+              }
+          })
         }
       });
     })
@@ -392,7 +400,6 @@ app.get('/user-msg/find', (req, res) => {
   }
 
 })
-
 
 
 app.listen('5000', () => {

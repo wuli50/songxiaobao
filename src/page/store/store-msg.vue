@@ -27,14 +27,18 @@
 			</el-form-item>
 			<el-form-item label="店铺照片" prop="image_path">
 				<input type="file" name="photo" id="photo" @change="onfilechange">
+        <img :src="storeMsg.image_path" alt="">
+        <img src="../../../src/assets/image/store123456id.jpg" alt="">
 			</el-form-item>
 			<el-form-item label="店铺公告" prop="promotion_info">
 				<el-input  type="textarea" v-model="storeMsg.promotion_info"></el-input>
 			</el-form-item>
 			
 			<el-form-item>
-				<el-button type="primary" @click="submitForm">立即创建</el-button>
+				<el-button type="primary" @click="submitForm" :disabled="storeMsg.is_submit_msg">立即创建</el-button>
 				<el-button @click="resetForm">重置</el-button>
+        <el-button type="primary"  @click="submitForm" v-if="storeMsg.is_submit_msg" >我要修改</el-button>
+
 			</el-form-item>
 			</el-form>
 	</section>
@@ -45,6 +49,7 @@ export default {
   data() {
     return {
       storeMsg: {
+        id:0,
         name: "",
         address: "",
         phone: "",
@@ -82,6 +87,26 @@ export default {
     };
   },
   methods: {
+    getStore(){
+      var that = this;
+      that.$http.post('http://127.0.0.1:5000/store-msg/find',{
+        name:that.getCookie('storename')
+      },{emulateJSON: true})
+      .then((data)=>{
+          if (data.body.state == 0) {
+            that.$message.error(data.body.message);
+          } else{
+            that.$message({
+              message: data.body.message,
+              type: 'success'
+            });
+            that.storeMsg = data.body.data[0]
+            that.storeMsg.image_path = '../../.'+data.body.data[0].image_path;
+            console.log(that.storeMsg.image_path)
+          }
+      })
+    },
+    
     submitForm() {
       var that = this;
       var formdata = new FormData();
@@ -116,10 +141,11 @@ export default {
         return
       }
       this.storeMsg.image_path = files[0];
-    }
+    },
   },
   mounted() {},
   created(){
+    this.getStore()
   }
 };
 </script>

@@ -10,6 +10,7 @@ function findUser(that,name,then) {
     })
 }
 
+
 module.exports={
     updataUser:updataUser,
     findUser:findUser

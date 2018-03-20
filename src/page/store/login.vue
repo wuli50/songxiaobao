@@ -85,14 +85,32 @@ import utils from '../../util.js'
         var that = this;
         that.$http.post('http://127.0.0.1:5000/store-msg/login',that.loginForm,{emulateJSON: true})
         .then((data)=>{
-          console.log(data)
+          if (data.body.state == 0) {
+            that.$message.error(data.body.message);
+          } else{
+            that.$message({
+              message: data.body.message,
+              type: 'success'
+            });
+            //传入账号名，密码，和保存天数3个参数
+            that.setCookie("storename",that.loginForm.name,5)
+            that.$router.push({ path: '/store'})
+
+          }
         })
       },
       join(){
         var that = this;
         that.$http.post('http://127.0.0.1:5000/store-msg/add',that.joinForm,{emulateJSON: true})
         .then((data)=>{
-          console.log(data)
+          if (data.body.state == 0) {
+            that.$message.error(data.body.message);
+          } else{
+            that.$message({
+              message: data.body.message,
+              type: 'success'
+            });
+          }
         })
       }
     }

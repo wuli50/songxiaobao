@@ -77,7 +77,7 @@ import bus from '../../bus.js'
 		data() {
 			return {
 				sysName:'送小煲店家管理系统',
-				adminUserName: '小煲',
+				adminUserName: ' ',
 				adminUserPho: './login.png',
 				form: {
 					name: '',
@@ -102,20 +102,34 @@ import bus from '../../bus.js'
 			handleselect: function (a, b) {
 			},
 			//退出登录
-			logout: function () {
-
-
+			logout(){
+				this.setCookie('storename','',1)
+				this.isLogin()
 			},
 			
 			showMenu(i,status){
 				this.$refs.menuCollapsed.getElementsByClassName('submenu-hook-'+i)[0].style.display=status?'block':'none';
+			},
+			// 判断是否登录
+			isLogin(){
+				if(this.getCookie('storename') == ''){
+					this.$message({
+						showClose: true,
+						message: '你还没有登录咧'
+					});
+					this.$router.push({ path: '/store/login'})
+				}else{
+					this.adminUserName = this.getCookie('storename')
+				}
 			}
 		},
 		mounted() {
 
         },
         created(){
-            bus.$emit('show-bar',false)
+			bus.$emit('show-bar',false)
+			this.isLogin()
+			
         },
 	}
 
