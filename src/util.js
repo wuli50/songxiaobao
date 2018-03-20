@@ -8,8 +8,6 @@ function findUser(that,name,then) {
     .then((res)=>{
         then(res.body)
     })
-    
-    
 }
 
 module.exports={

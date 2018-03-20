@@ -18,7 +18,9 @@ db.on('error',function(){
 var Schema = mongoose.Schema;
 // 创建 store-msg 表结构
 var storeMsgSchema = new Schema({
+    id:Number,
     name: String,
+    paw:String,
     address: String,
     phone: String,
     promotion_info: String,

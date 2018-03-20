@@ -91,12 +91,11 @@ export default {
           formdata.append(key, that.storeMsg[key])
         }
       }
-      that.$http.post("http://127.0.0.1:5000/add-store-msg", formdata,{
+      that.$http.post("http://127.0.0.1:5000/store-msg/update", formdata,{
         headers:{
                 'Content-Type':'multipart/form-data'
             }
       }).then((data)=>{
-        console.log(data.body);
          if (data.body.state == 0) {
             that.$message.error(data.body.message);
           } else{
@@ -104,7 +103,6 @@ export default {
               message: data.body.message,
               type: 'success'
             });
-            that.$router.push({ path: '/store'})
           }
       })
     },

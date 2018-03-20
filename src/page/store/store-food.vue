@@ -69,23 +69,22 @@
                 <el-form-item label="公告" prop="description">
                     <el-input v-model="addFoodForm.description" auto-complete="off"></el-input>
                 </el-form-item>
-                
                 <el-card class="box-card"  v-for="(food, index) in addFoodForm.foods" >
                     <div slot="header" class="clearfix">
                         <span>添加食品</span>
                         <el-button @click.prevent="removeFood(index)">删除</el-button>
                     </div>
                     <div class="text item">
-                        <el-form-item label="名称" prop="'foods.' + index + '.name'">
-                            <el-input v-model="food.name" auto-complete="off"></el-input>
+                        <el-form-item label="名称" prop="name">
+                            <el-input v-model="food.name" auto-complete="off">{{index}}</el-input>
                         </el-form-item>
-                        <el-form-item label="价格" prop="'foods.' + index + '.specfoods_price'">
+                        <el-form-item label="价格" prop="specfoods_price'">
                             <el-input v-model="food.specfoods_price" auto-complete="off"></el-input>
                         </el-form-item>
-                        <el-form-item label="品牌商品" prop="'foods.' + index + '.is_essential'">
+                        <el-form-item label="品牌商品" prop="is_essential'">
                             <el-switch v-model="food.is_essential"></el-switch>
                         </el-form-item>
-                        <el-form-item label="店铺照片" prop="'foods.' + index + '.specfoods_price'">
+                        <el-form-item label="食品照片" prop="image_path">
                             <input type="file" name="image_path"  @change="onfilechange(index)">
                         </el-form-item>
                     </div>
@@ -129,11 +128,11 @@ export default {
             name : "汉堡类",
             foods : [ 
                 {
-                    name : "墨西哥鸡肉卷",
+                    name : "",
                     is_essential : false,
-                    image_path : "00e2fdc050a98bf2e7f228245304cdfbjpeg",
-                    month_sales : 34,
-                    specfoods_price : 14.9,
+                    image_path : "",
+                    month_sales : 0,
+                    specfoods_price : 11.0,
                 }
             ],
         }
@@ -177,11 +176,11 @@ export default {
     },
     addFood() {
         this.addFoodForm.foods.push({
-            name : "墨西哥鸡肉卷",
+            name : "",
             is_essential : false,
-            image_path : "00e2fdc050a98bf2e7f228245304cdfbjpeg",
-            month_sales : 34,
-            specfoods_price : 14.9,
+            image_path : "",
+            month_sales : 0,
+            specfoods_price : 0,
         });
     },
     //获取到图片文件
@@ -198,14 +197,6 @@ export default {
   },
   mounted() {
     var that = this;
-    utils.findUser(that, "noname", function(data) {
-      console.log(data);
-      if (data.state == 0) {
-        that.$message.error(data.message);
-      } else {
-        that.userList = data.data;
-      }
-    });
   }
 };
 </script>

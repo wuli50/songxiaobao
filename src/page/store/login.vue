@@ -2,13 +2,13 @@
   <section>
       <el-tabs v-model="activeName" @tab-click="handleClick" class="login-box" tab-position="left">
         <el-tab-pane label="登录" name="login">
-            <el-form :model="loginFrom" :rules="rules" ref="loginFrom" label-position="top" label-width="0px" class="demo-ruleForm login-container" >
+            <el-form :model="loginForm" :rules="rules" ref="loginForm" label-position="top" label-width="0px" class="demo-ruleForm login-container" >
               <h3 class="title">店家登录</h3>
-              <el-form-item label="帐号" prop="name">
-                <el-input type="text" v-model="loginFrom.name" auto-complete="off" placeholder="账号"></el-input>
+              <el-form-item label="店名" prop="name">
+                <el-input type="text" v-model="loginForm.name" auto-complete="off" placeholder="店名"></el-input>
               </el-form-item>
               <el-form-item label="密码" prop="paw">
-                <el-input type="password" v-model="loginFrom.pass" auto-complete="off"></el-input>
+                <el-input type="password" v-model="loginForm.paw" auto-complete="off"></el-input>
               </el-form-item>
               <el-form-item style="width:100%;">
                 <el-button type="primary" style="width:100%" @click.native.prevent="login">登录</el-button>
@@ -16,16 +16,16 @@
             </el-form>
         </el-tab-pane>
         <el-tab-pane label="注册" name="join">
-            <el-form :model="joinFrom" :rules="rules" ref="joinFrom" label-position="top" label-width="0px" class="demo-ruleForm login-container" >
+            <el-form :model="joinForm" :rules="rules" ref="joinForm" label-position="top" label-width="0px" class="demo-ruleForm login-container" >
               <h3 class="title">店家注册</h3>
-              <el-form-item label="帐号" prop="name">
-                <el-input type="text" v-model="joinFrom.name" auto-complete="off" placeholder="账号"></el-input>
+              <el-form-item label="店名" prop="name">
+                <el-input type="text" v-model="joinForm.name" auto-complete="off" placeholder="店名"></el-input>
               </el-form-item>
               <el-form-item label="密码" prop="paw">
-                <el-input type="password" v-model="joinFrom.pass" auto-complete="off"></el-input>
+                <el-input type="password" v-model="joinForm.paw" auto-complete="off"></el-input>
               </el-form-item>
               <el-form-item label="确认密码" prop="checkPaw">
-                <el-input type="password" v-model="joinFrom.checkPass" auto-complete="off"></el-input>
+                <el-input type="password" v-model="joinForm.checkPaw" auto-complete="off"></el-input>
               </el-form-item>
               <el-form-item style="width:100%;">
                 <el-button type="primary" style="width:100%;" @click.native.prevent="join" >注册</el-button>
@@ -45,7 +45,7 @@ import utils from '../../util.js'
       var validatePaw2 = (rule, value, callback) => {
         if (value === '') {
           callback(new Error('请再次输入密码'));
-        } else if (value !== this.storeFrom.pass) {
+        } else if (value !== this.joinForm.paw) {
           callback(new Error('两次输入密码不一致!'));
         } else {
           callback();
@@ -53,12 +53,12 @@ import utils from '../../util.js'
       }
         return {
             activeName: 'login',
-            joinFrom: {
+            joinForm: {
               name: '',
               paw:"",
               checkPaw: ''
             },
-            loginFrom:{
+            loginForm:{
               name: '',
               paw:"",
             },
@@ -82,10 +82,18 @@ import utils from '../../util.js'
       handleClick(tab, event) {
       },
       login(){
-        
+        var that = this;
+        that.$http.post('http://127.0.0.1:5000/store-msg/login',that.loginForm,{emulateJSON: true})
+        .then((data)=>{
+          console.log(data)
+        })
       },
       join(){
-
+        var that = this;
+        that.$http.post('http://127.0.0.1:5000/store-msg/add',that.joinForm,{emulateJSON: true})
+        .then((data)=>{
+          console.log(data)
+        })
       }
     }
   }
