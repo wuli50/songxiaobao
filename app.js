@@ -16,6 +16,24 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 app.use(cookieParser());
 
+var multer = require('multer')
+var storage = multer.diskStorage({
+  // 设置数据存储的路径
+  destination:'./src/assets/image/food',
+  // 设置图片的文件命名
+  filename:function(req,res,callback){
+    var name = new Date().getDate();
+    var random = Math.random();
+    // 存储的对象创建完成后 自动调用回调函数
+    // 两个参数，错误的原因和文件的名称
+    callback(null,name+random+'.jpg');
+    console.log(name+random+'.jpg')
+  }
+})
+// 创建上传对象
+var upload = multer({storage});
+
+
 var StoreMsg = Song.StoreMsg;
 var StoreFood = Song.StoreFood;
 var UserMsg = Song.UserMsg;
@@ -61,7 +79,6 @@ app.options('/user/join', (req, res) => {
     message: 'ok'
   })
 })
-
 app.options('/store-food/add', (req, res) => {
   res.set('Access-Control-Allow-Headers', 'Content-Type,Access-Token')
   res.status(200).json({
@@ -79,6 +96,15 @@ app.options('/store-msg/login', (req, res) => {
   res.status(200).json({
     message: 'ok'
   })
+})
+app.options('/upimage',(req,res)=>{
+  res.set('Access-Control-Allow-Headers', 'Content-Type,Access-Token')
+  res.status(200).json({
+    message: 'ok'
+  })
+})
+app.post('/upimage',upload.single('photo'),function(req,res){
+  console.log(req.body)
 })
 
 // 用户获取店铺信息
@@ -221,9 +247,9 @@ app.post('/user/join', (req, res) => {
   })
   req.on("end", function () {})
 })
-// 管理员编辑店铺信息
+//查看店铺信息
 app.post('/store-msg/find', (req, res) => {
-    console.log(req.body)
+    // console.log(req.body)
     StoreMsg.find(req.body,(err,data)=>{
         if(err){
             res.json({
@@ -239,7 +265,6 @@ app.post('/store-msg/find', (req, res) => {
         }
     })
 })
-
 // 添加店铺
 app.post('/store-msg/add',(req,res)=>{
   StoreMsg.find({name:req.body.name},(err,data)=>{
@@ -312,14 +337,15 @@ app.post('/store-msg/update', (req, res) => {
   form.extensions = true;
   //文件的大小限制
   form.maxFieldsSize = 2 * 1024 * 1024;
+  console.log(req)
   form.parse(req, function (err, fields, files) {
+    StoreMsg.count({}, (err, num) => {
+      var id = num+1;
       var store = fields;
       var file = files.image_path;
       var oldpath = path.normalize(file.path);
       var newfilename = fields.name + id + '.jpg';
       var newpath = uploadDir + '/store' + newfilename;
-    StoreMsg.count({}, (err, num) => {
-      var id = num+1;
       var storemsg = {
         id:store.id,
         name: store.name,
@@ -362,6 +388,7 @@ app.post('/store-msg/update', (req, res) => {
 })
 // 添加菜品
 app.post('/store-food/add',(req,res)=>{
+  console.log(req.body)
   
 })
 
