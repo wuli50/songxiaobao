@@ -1,7 +1,7 @@
 <template>
     <section>
-        <div v-if = "is_submit_food==false">
-            <el-button class="add-food-btn" type="info" plain icon="el-icon-edit" @click="addFormShow=true">暂时还没有添加食物，去添加一些吧</el-button>
+        <div v-if = "is_submit_food == false">
+            <el-button class="add-food-btn" type="info" plain icon="el-icon-edit" @click="addFoodClassShow=true">暂时还没有添加食物，去添加一些吧</el-button>
         </div>
         <div v-else>
             <!--工具条-->
@@ -60,16 +60,25 @@
                 <el-button type="primary" @click.native="editSubmit" >提交</el-button>
             </div>
         </el-dialog>
-        <!-- 新增食物界面 -->
-        <el-dialog title="新增菜品分类" :visible.sync="addFormShow" :close-on-click-modal="false">
-            <el-form :model="addFoodForm" label-width="80px" ref="addFoodForm">
+        <!-- 新增食物分类界面 -->
+        <el-dialog title="新增菜品分类" :visible.sync="addFoodClassShow" :close-on-click-modal="false">
+            <el-form :model="FoodClassForm" label-width="80px" ref="FoodClassForm">
                 <el-form-item label="分类名" prop="name">
-                    <el-input v-model="addFoodForm.name" auto-complete="off"></el-input>
+                    <el-input v-model="FoodClassForm.name" auto-complete="off"></el-input>
                 </el-form-item>
                 <el-form-item label="公告" prop="description">
-                    <el-input v-model="addFoodForm.description" auto-complete="off"></el-input>
+                    <el-input v-model="FoodClassForm.description" auto-complete="off"></el-input>
                 </el-form-item>
-                <el-card class="box-card"  v-for="(food, index) in addFoodForm.foods" >
+            </el-form>
+            <div slot="footer" class="dialog-footer">
+                <el-button @click.native="editFormShow = false">取消</el-button>
+                <el-button type="primary" @click.native="addclassSubmit" >提交添加</el-button>
+            </div>
+        </el-dialog>
+        <!-- 新增分类食物 -->
+        <el-dialog title="新增食物" :visible.sync="addFoodShow" :close-on-click-modal="false">
+            <el-form label-width="80px" ref="foods">
+                <el-card class="box-card"  v-for="(food, index) in foods" >
                     <div slot="header" class="clearfix">
                         <span>添加食品</span>
                         <el-button @click.prevent="removeFood(index)">删除</el-button>
@@ -90,17 +99,15 @@
                     </div>
                 </el-card>
                 <el-form-item>
-                    <el-button type="primary">提交</el-button>
-                    <el-button @click="addFood">新增食物</el-button>
+                    <el-button @click="addFood" style="margin-top:10px">新增食物</el-button>
                 </el-form-item>
             </el-form>
             <div slot="footer" class="dialog-footer">
                 <el-button @click.native="editFormShow = false">取消</el-button>
-                <el-button type="primary" @click.native="addSubmit" >提交添加</el-button>
+                <el-button type="primary" @click.native="addclassSubmit" >提交添加</el-button>
             </div>
         </el-dialog>
     </section>
-
 </template>
 
 <script>
@@ -111,31 +118,32 @@ export default {
         // 
         is_submit_food:false,
       // 筛选条件
-      filters: {
-        name: ""
-      },
+        filters: {
+            name: ""
+        },
       // 食物列表
-      foodList: [],
+        foodList: [],
       //列表选中列
-      sels: [],
+        sels: [],
     //   编辑数据
         editFormShow:false,
         editForm:{
         },
-        addFormShow:false,
-        addFoodForm:{
+        addFoodClassShow:false,
+        FoodClassForm:{
             description : "",
             name : "汉堡类",
-            foods : [ 
-                {
-                    name : "",
-                    is_essential : false,
-                    image_path : "",
-                    month_sales : 0,
-                    specfoods_price : 11.0,
-                }
-            ],
-        }
+        },
+        addFoodShow:false,
+        foods : [ 
+            {
+                name : "",
+                is_essential : false,
+                image_path : "",
+                month_sales : 0,
+                specfoods_price : 11.0,
+            }
+        ],
     };
   },
   methods: {
@@ -165,22 +173,15 @@ export default {
             }
         })
     },
-    addSubmit(){
+    addclassSubmit(){
         var that = this;
-      var formdata = new FormData();
-      //读取data中所要上传的内容循环append到fordata中
-      for (var key in that.addFoodForm) {  
-        if (key) {
-          formdata.append(key, that.addFoodForm[key])
-        }
-      }
-      that.$http.post("http://127.0.0.1:5000/store-food/add", formdata,{
-        headers:{
-                'Content-Type':'multipart/form-data'
-            }
-      }).then((data)=>{
-
-      })
+        that.$http.post("http://127.0.0.1:5000/song-api/store-food/add",{
+            storename:that.getCookie('storename'),
+            data:that.addFoodForm
+        },{emulateJSON: true})
+        .then((data)=>{
+            console.log(data)
+        })
 
     },
     // 新增页面
@@ -200,8 +201,6 @@ export default {
     },
     //获取到图片文件
     onfilechange: function(index,e) {
-      console.log(index)
-      console.log(e)
         var files = e.target.files || e.dataTransfer.files;
         if (!files.length) 
             {

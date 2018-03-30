@@ -21,3 +21,64 @@ getshortList(){
           this.storeList = data.body.slice(0,20);
       })
 }
+// 跨域问题旧办法
+app.options('/store-msg/add', (req, res) => {
+    res.set('Access-Control-Allow-Headers', 'Content-Type,Access-Token')
+    res.status(200).json({
+      message: 'ok'
+    })
+  })
+  app.options('/store-msg/find', (req, res) => {
+    res.set('Access-Control-Allow-Headers', 'Content-Type,Access-Token')
+    res.status(200).json({
+      message: 'ok'
+    })
+  })
+  app.options('/store-msg/update', (req, res) => {
+    res.set('Access-Control-Allow-Headers', 'Content-Type,Access-Token')
+    res.status(200).json({
+      message: 'ok'
+    })
+  })
+  app.options('/store-food/find', (req, res) => {
+    res.set('Access-Control-Allow-Headers', 'Content-Type,Access-Token')
+    res.status(200).json({
+      message: 'ok'
+    })
+  })
+  app.options('/user/login', (req, res) => {
+    res.set('Access-Control-Allow-Headers', 'Content-Type,Access-Token')
+    res.status(200).json({
+      message: 'ok'
+    })
+  })
+  app.options('/user/join', (req, res) => {
+    res.set('Access-Control-Allow-Headers', 'Content-Type,Access-Token')
+    res.status(200).json({
+      message: 'ok'
+    })
+  })
+  app.options('/store-food/add', (req, res) => {
+    res.set('Access-Control-Allow-Headers', 'Content-Type,Access-Token')
+    res.status(200).json({
+      message: 'ok'
+    })
+  })
+  app.options('/user-msg/find', (req, res) => {
+    res.set('Access-Control-Allow-Headers', 'Content-Type,Access-Token')
+    res.status(200).json({
+      message: 'ok'
+    })
+  })
+  app.options('/store-msg/login', (req, res) => {
+    res.set('Access-Control-Allow-Headers', 'Content-Type,Access-Token')
+    res.status(200).json({
+      message: 'ok'
+    })
+  })
+  app.options('/upimage',(req,res)=>{
+    res.set('Access-Control-Allow-Headers', 'Content-Type,Access-Token')
+    res.status(200).json({
+      message: 'ok'
+    })
+  })

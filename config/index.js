@@ -28,12 +28,21 @@ module.exports = {
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
     // 配置服务器管理
+    // proxyTable: {
+    //   '/ele':{
+    //     target:"https://mainsite-restapi.ele.me",
+    //     changeOrigin:true,
+    //     pathRewrite:{
+    //       '^/ele':''
+    //     }
+    //   }
+    // },
     proxyTable: {
-      '/ele':{
-        target:"https://mainsite-restapi.ele.me",
-        changeOrigin:true,
-        pathRewrite:{
-          '^/ele':''
+      '/api': {
+        target: 'http://localhost:5000/api/',
+        changeOrigin: true,
+        pathRewrite: {
+          '^/api': ''
         }
       }
     },
