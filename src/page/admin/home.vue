@@ -42,13 +42,6 @@
                             <el-menu-item index="1-2"><router-link to = "/admin/user-order">用户订单管理</router-link></el-menu-item>
                         </el-menu-item-group>
                     </el-submenu>
-					<el-submenu index="2">
-                        <template slot="title"><i class="el-icon-message"></i>用户管理</template>
-                        <el-menu-item-group>
-                            <el-menu-item index="2-1"><router-link to = "/admin/store-msg">用户信息管理</router-link></el-menu-item>
-                            <el-menu-item index="2-2"><router-link to = "/login">用户订单管理</router-link></el-menu-item>
-                        </el-menu-item-group>
-                    </el-submenu>
                 </el-menu>
 			</aside>
 			<section class="content-container">
