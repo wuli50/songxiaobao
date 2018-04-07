@@ -1,9 +1,9 @@
 <template>
     <section>
-        <div v-if = "is_submit_food == false">
-            <el-button class="add-food-btn" type="info" plain icon="el-icon-edit" @click="addFoodClassShow=true">暂时还没有添加食物，去添加一些吧</el-button>
+        <div>
+            <el-button class="add-food-btn" type="info" plain icon="el-icon-edit" @click="addFoodClassShow=true">添加分类</el-button>
         </div>
-        <div v-else>
+        <div>
             <!--工具条-->
             <el-col :span="24" class="toolbar" style="padding-bottom: 0px;">
                 <el-form :inline="true" :model="filters">
@@ -13,37 +13,35 @@
                     <el-form-item>
                         <el-button type="primary">查询</el-button>
                     </el-form-item>
-                    <el-form-item>
-                        <el-button type="primary">新增</el-button>
-                    </el-form-item>
                 </el-form>
             </el-col>
-            <!-- 列表 -->
-            <el-table :data="userList" style="width: 100%" height="250"  @selection-change="selsChange">
+            <!-- 食品列表 -->
+            <el-table :data="foodsList" style="width: 100%" height="250"  @selection-change="selsChange">
                 <el-table-column  type="selection" width="55">
                 </el-table-column>
-                <el-table-column fixed prop="id" label="id"  width="150">
+                <!-- 分类具体食物 -->
+                <el-table-column type="expand">
+                    <template slot-scope="props">
+                        <el-table :data="foods"
+                            height="250" border style="width: 100%">
+                            <!-- <el-table-column prop="name" label="食品名称" width="180"></el-table-column> -->
+                        </el-table>
+                    </template>
                 </el-table-column>
-                <el-table-column prop="name" label="姓名" width="120">
-                </el-table-column>
-                <el-table-column prop="paw" label="密码" width="120">
-                </el-table-column>
-                <el-table-column prop="phone" label="手机号" width="180">
-                </el-table-column>
-                <el-table-column label="操作" width="180"  fixed="right">
+                <el-table-column prop="name" label="分类名称" width="120"></el-table-column>
+                <el-table-column prop="description" label="备注" width="400"></el-table-column>
+                <!-- 操作  fixed="right"-->
+                <el-table-column label="操作" width="300" >
                     <template slot-scope="scope">
-                        <el-button size="small" @click="showEditForm(scope.row)">编辑</el-button>
+                        <el-button size="small" @click="showClassEditForm(scope.row)">编辑</el-button>
+                        <el-button size="small" type="primary" @click="showAddFood(scope.row)">添加食品</el-button>
                         <el-button type="danger" size="small" @click="remove(scope.row)">删除</el-button>
                     </template>
                 </el-table-column>
             </el-table>
-            <!-- 工具条 -->
-            <el-col :span="24" class="toolbar">
-                <el-button type="danger" @click="batchRemove" :disabled="this.sels.length===0">批量删除</el-button>
-            </el-col>
         </div>
         <!-- 编辑界面 editForm -->
-        <el-dialog title="编辑" :visible.sync="editFormShow" :close-on-click-modal="false">
+        <!-- <el-dialog title="编辑" :visible.sync="editFormShow" :close-on-click-modal="false">
             <el-form :model="editForm" label-width="80px" ref="editForm">
                 <el-form-item label="姓名" prop="name">
                     <el-input v-model="editForm.name" auto-complete="off"></el-input>
@@ -59,7 +57,8 @@
                 <el-button @click.native="editFormShow = false">取消</el-button>
                 <el-button type="primary" @click.native="editSubmit" >提交</el-button>
             </div>
-        </el-dialog>
+        </el-dialog> -->
+
         <!-- 新增食物分类界面 -->
         <el-dialog title="新增菜品分类" :visible.sync="addFoodClassShow" :close-on-click-modal="false">
             <el-form :model="FoodClassForm" label-width="80px" ref="FoodClassForm">
@@ -72,9 +71,10 @@
             </el-form>
             <div slot="footer" class="dialog-footer">
                 <el-button @click.native="editFormShow = false">取消</el-button>
-                <el-button type="primary" @click.native="addclassSubmit" >提交添加</el-button>
+                <el-button type="primary" @click.native="addclassSubmit" >提交分类添加</el-button>
             </div>
         </el-dialog>
+
         <!-- 新增分类食物 -->
         <el-dialog title="新增食物" :visible.sync="addFoodShow" :close-on-click-modal="false">
             <el-form label-width="80px" ref="foods">
@@ -104,7 +104,7 @@
             </el-form>
             <div slot="footer" class="dialog-footer">
                 <el-button @click.native="editFormShow = false">取消</el-button>
-                <el-button type="primary" @click.native="addclassSubmit" >提交添加</el-button>
+                <el-button type="primary" @click.native="addFoodSubmit" >提交添加</el-button>
             </div>
         </el-dialog>
     </section>
@@ -122,7 +122,7 @@ export default {
             name: ""
         },
       // 食物列表
-        foodList: [],
+        foodsList: [],
       //列表选中列
         sels: [],
     //   编辑数据
@@ -135,6 +135,8 @@ export default {
             name : "汉堡类",
         },
         addFoodShow:false,
+        // 添加食物所在的分类_id
+        add_class_is:'',
         foods : [ 
             {
                 name : "",
@@ -147,57 +149,90 @@ export default {
     };
   },
   methods: {
+    //   获取食物列表
+    getFoodList(obj){
+        var that = this;
+         that.$http.post('api/store-food/find',obj,{emulateJSON: true})
+        .then((data)=>{
+            if (data.body.state == 0) {
+                that.$message.error(data.body.message);
+            } else{
+                that.$message({
+                    message: data.body.message,
+                    type: 'success'
+                });
+                that.foodsList = data.body.data;
+                console.log(that.foodsList)
+            }
+        })
+    },
+    // 展示添加食物列表
+    showAddFood(row){
+        var that = this;
+        that.addFoodShow = true;
+        that.add_class_is = row.add_class_is
+    },
     //   删除
     remove(row) {
       //列表信息
       console.log(row);
-    },
-    // 批量删除
-    batchRemove() {
-      var ids = this.sels.map(item => item.id).toString();
     },
     // 监听选中列的变化
     selsChange(sels) {
       console.log(this.sels);
       this.sels = sels;
     },
-    // 显示编辑页面
-    showEditForm(row){
+    // 显示分类编辑页面
+    showClassEditForm(row){
         var that = this;
-        utils.findUser(that,row.name,function(data){
-            if (data.state == 0) {
-                that.$message.error(data.message);
-            } else {
-                that.editForm = data.data[0];
-                that.editFormShow = true;
+        //读取相应分类信息
+        
+    },
+    // 添加分类
+    addclassSubmit(){
+        var that = this;
+        that.$http.post("api/store-food/add",{
+            storename:that.getCookie('storename'),
+            data:that.FoodClassForm
+        },{emulateJSON: true})
+        .then((data)=>{
+             if (data.body.state == 0) {
+                that.$message.error(data.body.message);
+            } else{
+                that.$message({
+                    message: data.body.message,
+                    type: 'success'
+                });
+                that.getFoodList({store_name:that.getCookie('storename')})
             }
         })
     },
-    addclassSubmit(){
-        var that = this;
-        that.$http.post("http://127.0.0.1:5000/song-api/store-food/add",{
-            storename:that.getCookie('storename'),
-            data:that.addFoodForm
-        },{emulateJSON: true})
-        .then((data)=>{
-            console.log(data)
-        })
-
-    },
-    // 新增页面
-    removeFood(index) {
-        if (index !== -1) {
-          this.addFoodForm.foods.splice(index, 1)
-        }
-    },
-    addFood() {
-        this.addFoodForm.foods.push({
+    // 表单添加食物
+    addFood(){
+        this.foods.push( {
             name : "",
             is_essential : false,
             image_path : "",
             month_sales : 0,
-            specfoods_price : 0,
+            specfoods_price : 11.0,
         });
+    },
+    // 移除食物
+    removeFood(index) {
+        if (index !== -1) {
+          this.foods.splice(index, 1)
+        }
+    },
+    // 提交添加食品
+    addFoodSubmit(){
+        var that = this;
+        that.$http.post('api/store-food/addfood',{
+            class_id:that.add_class_is,
+            data:that.foods
+        },{emulateJSON: true})
+        .then((data)=>{
+
+        })
     },
     //获取到图片文件
     onfilechange: function(index,e) {
@@ -206,11 +241,14 @@ export default {
             {
                 return
             }
-        this.addFoodForm.foods[index].image_path = files[0];
+        this.foods[index].image_path = files[0];
     }
   },
   mounted() {
+  },
+  created(){
     var that = this;
+    that.getFoodList({store_name:that.getCookie('storename')})
   }
 };
 </script>

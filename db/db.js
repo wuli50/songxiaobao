@@ -48,7 +48,8 @@ var storeFoodSchema = new Schema({
         // 价格
         specfoods_price:Number
     }],
-    restaurant_object_id:{type:Schema.Types.ObjectId,ref:'StoreMsg'}
+    store_name:String,
+    restaurant_id:String
 },{collection: 'store-food'})
 
 var userMsgSchema = new Schema({

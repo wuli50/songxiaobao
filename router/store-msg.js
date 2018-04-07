@@ -6,6 +6,7 @@ var Song = require("../db/db.js");
 var formidable = require('formidable');
 // 导入读取项目文件的功能模块
 var fs = require("fs");
+var path = require('path');
 
 // 导入数据表
 var StoreMsg = Song.StoreMsg;
@@ -94,7 +95,8 @@ router.post('/login',(req,res)=>{
 })
 // 修改店铺信息
 router.post('/update', (req, res) => {
-  var uploadDir = './src/assets/image';
+  // var uploadDir = './src/assets/image';
+  var  uploadDir = './static/store_msg_image';
   var form = new formidable.IncomingForm();
   //文件的编码格式
   form.encoding = 'utf-8';
@@ -104,7 +106,7 @@ router.post('/update', (req, res) => {
   form.extensions = true;
   //文件的大小限制
   form.maxFieldsSize = 2 * 1024 * 1024;
-  console.log(req)
+  // console.log(req)
   form.parse(req, function (err, fields, files) {
     StoreMsg.count({}, (err, num) => {
       var id = num+1;

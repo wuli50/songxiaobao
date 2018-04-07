@@ -28,7 +28,6 @@
 			<el-form-item label="店铺照片" prop="image_path">
 				<input type="file" name="photo" id="photo" @change="onfilechange">
         <img :src="storeMsg.image_path" alt="">
-        <img src="../../../src/assets/image/store123456id.jpg" alt="">
 			</el-form-item>
 			<el-form-item label="店铺公告" prop="promotion_info">
 				<el-input  type="textarea" v-model="storeMsg.promotion_info"></el-input>
@@ -89,7 +88,8 @@ export default {
   methods: {
     getStore(){
       var that = this;
-      that.$http.post('http://127.0.0.1:5000/store-msg/find',{
+      // console.log(that.getCookie('storename'))
+      that.$http.post('api/store-msg/find',{
         name:that.getCookie('storename')
       },{emulateJSON: true})
       .then((data)=>{
@@ -100,9 +100,9 @@ export default {
               message: data.body.message,
               type: 'success'
             });
-            that.storeMsg = data.body.data[0]
+            that.storeMsg = data.body.data[0];
             that.storeMsg.image_path = '../../.'+data.body.data[0].image_path;
-            console.log(that.storeMsg.image_path)
+            
           }
       })
     },
@@ -116,7 +116,7 @@ export default {
           formdata.append(key, that.storeMsg[key])
         }
       }
-      that.$http.post("http://127.0.0.1:5000/store-msg/update", formdata,{
+      that.$http.post("api/store-msg/update", formdata,{
         headers:{
                 'Content-Type':'multipart/form-data'
             }

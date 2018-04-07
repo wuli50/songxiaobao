@@ -83,7 +83,7 @@ import utils from '../../util.js'
       },
       login(){
         var that = this;
-        that.$http.post('http://127.0.0.1:5000/store-msg/login',that.loginForm,{emulateJSON: true})
+        that.$http.post('/api/store-msg/login',that.loginForm,{emulateJSON: true})
         .then((data)=>{
           if (data.body.state == 0) {
             that.$message.error(data.body.message);
@@ -101,7 +101,7 @@ import utils from '../../util.js'
       },
       join(){
         var that = this;
-        that.$http.post('http://127.0.0.1:5000/store-msg/add',that.joinForm,{emulateJSON: true})
+        that.$http.post('/api/store-msg/add',that.joinForm,{emulateJSON: true})
         .then((data)=>{
           if (data.body.state == 0) {
             that.$message.error(data.body.message);
