@@ -189,14 +189,14 @@ export default {
   },
   methods:{
     // 获取天气
-      getWeather(){
-        //   https://mainsite-restapi.ele.me/bgs/weather/current?latitude=31.96205&longitude=118.85778
-          this.$http.get('/ele/bgs/weather/current?latitude=31.96205&longitude=118.85778')
-            .then((data)=>{
-                // console.log(data);
-                this.weather = data.body
-            })
-      },
+    //   getWeather(){
+    //     //   https://mainsite-restapi.ele.me/bgs/weather/current?latitude=31.96205&longitude=118.85778
+    //       this.$http.get('/ele/bgs/weather/current?latitude=31.96205&longitude=118.85778')
+    //         .then((data)=>{
+    //             // console.log(data);
+    //             this.weather = data.body
+    //         })
+    //   },
     //   获取热门推荐
       getHot(){
           this.$http.get('/ele/shopping/v3/hot_search_words?latitude=31.96205&longitude=118.85778')

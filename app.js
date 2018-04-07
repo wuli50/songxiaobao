@@ -25,17 +25,21 @@ app.use(function (req, res, next){
   next();
 })
 
+// 由于需要处理的接口很多，所以对服务器入口文件进行了分路由操作方便项目的管理
 // 引入用户路由
-app.use('/song-api/user-msg',require("./router/user-msg.js"))
+app.use('/api/user-msg',require("./router/user-msg.js"))
 // 引入店铺路由
-app.use('/song-api/store-msg',require("./router/store-msg.js"));
+app.use('/api/store-msg',require("./router/store-msg.js"));
 // 引入食物路由
-app.use('/song-api/store-food',require("./router/store-food.js"));
+app.use('/api/store-food',require("./router/store-food.js"));
 
 // 用户获取店铺信息
 app.get('/store-msg/find', (req, res) => {
   console.log(req.query.id)
+  // 判断用户的查询条件
   if (req.query.id == undefined) {
+    // 对数据库数据进行查询；
+    // 参数一：查询条件，参数二：查询结果的回调函数（错误信息，返回数据）
     StoreMsg.find({}, function (err, data) {
       if (!err) {
         res.status(200).send(data)
@@ -126,6 +130,7 @@ app.post('/user/join', (req, res) => {
   req.on("data", function (chunk) {
     str += chunk;
     var data = JSON.parse(JSON.parse(str).data);
+    // 获取用户在前端输入的用户名
     // 判断用户名是否存在=>存入用户信息
     UserMsg.find({
       name: data.name
@@ -136,20 +141,24 @@ app.post('/user/join', (req, res) => {
           state: 0
         })
       } else {
-        console.log(dbdata)
+        // 返回的数据长度大于0 说明用户存在
         if (dbdata.length > 0) {
+          // 将服务端判断的结果返回给客户端
           res.json({
             message: "用户名已存在，换一个吧",
             state: 0
           })
         } else {
           // 存储数据
+          // 创造数据的实例对象
+          // 给实例对象赋值
           var usermsg = new UserMsg({
             id: new Date().getTime(),
             name: data.name,
             paw: data.password1,
             phone: data.phone
           })
+          // 将数据存入数据库
           usermsg.save(function (err, data, status) {
             if (err) {
               res.json({

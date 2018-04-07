@@ -15,6 +15,7 @@ var StoreFood = Song.StoreFood;
 var router = express.Router();
 
 //查看店铺信息
+// 创建接口
 router.post('/find', (req, res) => {
     // 根据接口参数获取查询条件
     // console.log(req.body)
@@ -133,6 +134,8 @@ router.post('/update', (req, res) => {
           })
         } else {
           storemsg.image_path = newpath;
+          //update对数据进行修改
+          // 参数一，需要修改的数据的查询条件；参数二：修改的内容；参数三：修改结果
           StoreMsg.update({name:storemsg.name},storemsg,(err)=>{
               if(err){
                 res.json({
