@@ -1,7 +1,7 @@
 <template>
 	<section>
 		<!--工具条-->
-		<el-col :span="24" class="toolbar" style="padding-bottom: 0px;">
+		<!-- <el-col :span="24" class="toolbar" style="padding-bottom: 0px;">
 			<el-form :inline="true" :model="filters">
 				<el-form-item>
 					<el-input v-model="filters.name" placeholder="店名"></el-input>
@@ -13,55 +13,50 @@
 					<el-button type="primary" @click="handleAdd">新增</el-button>
 				</el-form-item>
 			</el-form>
-		</el-col>
+		</el-col> -->
 
 		<!--列表-->
-        <!-- sortable:是否可以排序 -->
-		<el-table :data="storeList" highlight-current-row v-loading="listLoading" @selection-change="selsChange" style="width: 100%;">
+        <!-- sortable:是否可以排序  @selection-change="selsChange"-->
+		<el-table :data="storeList" highlight-current-row style="width: 100%;" height="600">
 			<el-table-column type="selection" width="55">
 			</el-table-column>
-			<el-table-column type="expand">
-				<template slot-scope="props">
-					<el-form label-position="left" inline class="demo-table-expand">
-						<el-form-item label="店铺活动">
-							<span>{{ props.row.activities.length }}个</span>
-						</el-form-item>
-						<el-form-item label="活动详情:">
-							<div v-for="active in props.row.activities"><p class="active-tips">{{ active.tips }}</p></div>
-						</el-form-item>
-					</el-form>
+			<el-table-column prop="_id" width="60" label="_id">
+			</el-table-column>
+			<el-table-column prop="name" label="店名" width="120">
+			</el-table-column>
+			<el-table-column prop="is_aduit_msg" label="店铺信息审核" width="120">
+				<template slot-scope="scope">
+					<el-button :type="scope.row.is_aduit_msg ? 'success':'primary' " @click="aduit('msg',scope.row)">{{scope.row.is_aduit_msg ?'已审核':'未审核'}}</el-button>
 				</template>
 			</el-table-column>
-
-			<el-table-column prop="id" width="60" label="id">
-			</el-table-column>
-			<el-table-column prop="name" label="店名" width="120" sortable>
+			<el-table-column prop="is_aduit_food" label="店铺食物审核" width="120">
+				<template slot-scope="scope">
+					<el-button :type="scope.row.is_aduit_food ? 'success':'primary' " @click="aduit('food',scope.row)">{{scope.row.is_aduit_msg ?'已审核':'未审核'}}</el-button>
+				</template>
 			</el-table-column>
 			<el-table-column prop="distribution" label="配送费" width="100" sortable>
-			</el-table-column>
-			<el-table-column prop="rating" label="评分" width="100" sortable>
 			</el-table-column>
 			<el-table-column prop="phone" label="电话" width="120" sortable>
 			</el-table-column>
 			<el-table-column prop="address" label="地址" min-width="180" sortable>
 			</el-table-column>
-			<el-table-column label="操作" width="150" fixed="right">
+			<el-table-column label="操作" width="200" fixed="right">
 				<template scope="scope">
-					<el-button size="small" @click="handleEdit(scope.row.id)">编辑</el-button>
+					<el-button type="primary" plain size="small" @click="findFood(scope.$index, scope.row)">查看菜品</el-button>
 					<el-button type="danger" size="small" @click="handleDel(scope.$index, scope.row)">删除</el-button>
 				</template>
 			</el-table-column>
 		</el-table>
 
 		<!--工具条-->
-		<el-col :span="24" class="toolbar">
+		<!-- <el-col :span="24" class="toolbar">
 			<el-button type="danger" @click="batchRemove" :disabled="this.sels.length===0">批量删除</el-button>
 			<el-pagination layout="prev, pager, next" @current-change="handleCurrentChange" :page-size="20" :total="total" style="float:right;">
 			</el-pagination>
-		</el-col>
+		</el-col> -->
 
 		<!--编辑界面-->
-		<el-dialog title="编辑" :visible.sync="editFormVisible" :close-on-click-modal="false">
+		<!-- <el-dialog title="编辑" :visible.sync="editFormVisible" :close-on-click-modal="false">
 			<el-form :model="editForm" label-width="80px" ref="editForm">
 				<el-form-item label="店名" prop="name">
 					<el-input v-model="editForm.name" auto-complete="off"></el-input>
@@ -83,10 +78,10 @@
 				<el-button @click.native="editFormVisible = false">取消</el-button>
 				<el-button type="primary" @click.native="editSubmit" :loading="editLoading">提交</el-button>
 			</div>
-		</el-dialog>
+		</el-dialog> -->
 
 		<!--新增界面-->
-		<el-dialog title="新增" :visible.sync="addFormVisible" :close-on-click-modal="false">
+		<!-- <el-dialog title="新增" :visible.sync="addFormVisible" :close-on-click-modal="false">
 			<el-form :model="addForm" label-width="80px" ref="addForm">
 				<el-form-item label="店名" prop="name">
 					<el-input v-model="addForm.name" auto-complete="off"></el-input>
@@ -108,7 +103,7 @@
 				<el-button @click.native="addFormVisible = false">取消</el-button>
 				<el-button type="primary" @click.native="addSubmit" :loading="addLoading">提交</el-button>
 			</div>
-		</el-dialog>
+		</el-dialog> -->
 	</section>
 </template>
 
@@ -116,173 +111,107 @@
 	export default {
 		data() {
 			return {
-				filters: {
-					name: ''
-				},
+				// filters: {
+				// 	name: ''
+				// },
 				storeList: [],
-				total: 0,
-				page: 1,
-				listLoading: false,
-				sels: [],//列表选中列
+				// total: 0,
+				// page: 1,
+				// listLoading: false,
+				// sels: [],//列表选中列
 
-				editFormVisible: false,//编辑界面是否显示
-				editLoading: false,
-				//编辑界面数据
-				editForm: {},
+				// editFormVisible: false,//编辑界面是否显示
+				// editLoading: false,
+				// //编辑界面数据
+				// editForm: {},
 
-				addFormVisible: false,//新增界面是否显示
-				addLoading: false,
-				//新增界面数据
-				addForm: {
-					name: '',
-					address: "",
-					promotion_info: "",
-					phone: '',
-					is_new: false
-				}
+				// addFormVisible: false,//新增界面是否显示
+				// addLoading: false,
+				// //新增界面数据
+				// addForm: {
+				// 	name: '',
+				// 	address: "",
+				// 	promotion_info: "",
+				// 	phone: '',
+				// 	is_new: false
+				// }
 
 			}
 		},
 		methods: {
-			
-			// 查询店铺
-			findStore(){
-
-			},
-			handleCurrentChange(val) {
-				this.page = val;
-				// this.getUsers();
-			},
-			//获取用户列表
-			getStoreMsg() {
-				this.$http.get('http://127.0.0.1:5000/user/store-msg')
-                .then((data)=>{
-                    // console.log(data.body)
-                    this.storeList = data.body;
-                })
-			},
-			//删除
-			handleDel: function (index, row) {
-				this.$confirm('确认删除该记录吗?', '提示', {
-					type: 'warning'
-				}).then(() => {
-					this.listLoading = true;
-					//NProgress.start();
-					let para = { id: row.id };
-					removeUser(para).then((res) => {
-						this.listLoading = false;
-						//NProgress.done();
-						this.$message({
-							message: '删除成功',
+			// 获取店铺列表
+			getStoreList(obj){
+				// 参数查询条件
+				var that = this;
+				that.$http.post('api/store-msg/find',obj,{emulateJSON: true})
+				.then((data)=>{
+					if (data.body.state == 0) {
+						that.$message.error(data.body.message);
+					} else{
+						that.$message({
+							message: data.body.message,
 							type: 'success'
 						});
-						// this.getUsers();
-					});
-				}).catch(() => {
-
-				});
-			},
-			//显示编辑界面
-			handleEdit: function (storeid) {
-				var that = this
-				this.editFormVisible = true;
-				var obj = {id:storeid}
-				this.$http.post('http://127.0.0.1:5000/user/find-store-msg',{
-					data:obj
+						that.storeList = data.body.data;
+					}
 				})
-                .then((data)=>{
-					// console.log(data.body[0])
-					that.editForm = data.body[0];
-                })
 			},
-			//显示新增界面
-			handleAdd: function () {
-				alert('1232')
-				this.addFormVisible = true;
-				this.addForm = {
-					name: '',
-					address: "",
-					promotion_info: "",
-					phone: '',
-					is_new: false
-				}
-			},
-			//编辑
-			editSubmit: function () {
-				this.$refs.editForm.validate((valid) => {
-					if (valid) {
-						this.$confirm('确认提交吗？', '提示', {}).then(() => {
-							this.editLoading = true;
-							//NProgress.start();
-							let para = Object.assign({}, this.editForm);
-							para.birth = (!para.birth || para.birth == '') ? '' : util.formatDate.format(new Date(para.birth), 'yyyy-MM-dd');
-							editUser(para).then((res) => {
-								this.editLoading = false;
-								//NProgress.done();
-								this.$message({
-									message: '提交成功',
-									type: 'success'
-								});
-								this.$refs['editForm'].resetFields();
-								this.editFormVisible = false;
-								// this.getUsers();
-							});
-						});
-					}
-				});
-			},
-			//新增
-			addSubmit: function () {
-				this.$refs.addForm.validate((valid) => {
-					if (valid) {
-						this.$confirm('确认提交吗？', '提示', {}).then(() => {
-							this.addLoading = true;
-							//NProgress.start();
-							let para = Object.assign({}, this.addForm);
-							para.birth = (!para.birth || para.birth == '') ? '' : util.formatDate.format(new Date(para.birth), 'yyyy-MM-dd');
-							addUser(para).then((res) => {
-								this.addLoading = false;
-								//NProgress.done();
-								this.$message({
-									message: '提交成功',
-									type: 'success'
-								});
-								this.$refs['addForm'].resetFields();
-								this.addFormVisible = false;
-								// this.getUsers();
-							});
-						});
-					}
-				});
-			},
-			selsChange: function (sels) {
-				this.sels = sels;
-			},
-			//批量删除
-			batchRemove: function () {
-				var ids = this.sels.map(item => item.id).toString();
-				this.$confirm('确认删除选中记录吗？', '提示', {
-					type: 'warning'
-				}).then(() => {
-					this.listLoading = true;
-					//NProgress.start();
-					let para = { ids: ids };
-					batchRemoveUser(para).then((res) => {
-						this.listLoading = false;
-						//NProgress.done();
-						this.$message({
-							message: '删除成功',
+			// 删除店铺
+			handleDel(index,row){
+				console.log(index);
+				console.log(row);
+				var that = this;
+				that.$http.post('api/store-msg/remove',{_id:row._id},{emulateJSON: true})
+				.then((data)=>{
+					if (data.body.state == 0) {
+						that.$message.error(data.body.message);
+					} else{
+						that.$message({
+							message: data.body.message,
 							type: 'success'
 						});
-						// this.getUsers();
-					});
-				}).catch(() => {
+						that.getStoreList();
+					}
+				})
+			},
+			// 审核
+			aduit(type,row){
+				var that = this;
+				// 查询条件
+				var find = {
+					_id:row._id
+				}
+				// 修改条件
+				var editmsg = {}
+				if(type == 'msg'){
+					editmsg.is_aduit_msg = true;
+				}else{
+					editmsg.is_aduit_food = true;
+				}
+				that.$http.post('api/store-msg/aduit',{
+					find:find,
+					editmsg:editmsg
+				},{emulateJSON: true})
+				.then((data)=>{
+					console.log(data);
+					if (data.body.state == 0) {
+						that.$message.error(data.body.message);
+					} else{
+						that.$message({
+							message: data.body.message,
+							type: 'success'
+						});
+						that.storeList = data.body.data;
+						that.getStoreList();
+					}
+					
+				})
 
-				});
 			}
+			
 		},
 		mounted() {
-			this.getStoreMsg();
+			this.getStoreList();
 		}
 	}
 

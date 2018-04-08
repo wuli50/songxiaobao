@@ -102,7 +102,6 @@ export default {
             });
             that.storeMsg = data.body.data[0];
             that.storeMsg.image_path = '../../.'+data.body.data[0].image_path;
-            
           }
       })
     },

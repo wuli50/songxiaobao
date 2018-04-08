@@ -22,7 +22,7 @@ Vue.config.productionTip = false
 Vue.use(VueResource);
 Vue.use(ElementUI)
 // 设置默认路径
-router.push('/store')
+router.push('/admin')
 
 // cookie
 Vue.prototype.setCookie = function(c_name,value,expiredays) {

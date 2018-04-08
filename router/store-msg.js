@@ -157,6 +157,40 @@ router.post('/update', (req, res) => {
 
   })
 })
+// 审核店铺信息
+router.post('/aduit',(req,res)=>{
+  console.log(req.body);
+  StoreMsg.update(req.body.find,req.body.editmsg,(err)=>{
+    if(err){
+      res.json({
+          state:0,
+          message:"数据审核失败"
+      })
+    }else{
+      res.json({
+          state:1,
+          message:"数据审核成功"
+      })
+    }
+  })
+})
+// 删除店铺
+router.post('/remove',(req,res)=>{
+  console.log(req.body);
+  StoreMsg.remove(req.body,(err)=>{
+    if(err){
+      res.json({
+          state:0,
+          message:"数据删除失败"
+      })
+    }else{
+      res.json({
+          state:1,
+          message:"数据删除成功"
+      })
+    }
+  })
+})
 
 // 导出路由
 module.exports = router;

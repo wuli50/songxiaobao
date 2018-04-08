@@ -47,23 +47,21 @@
 							<el-breadcrumb-item v-for="item in $route.matched" :key="item.path">
 								{{ item.name }}
 							</el-breadcrumb-item>
-						</el-breadcrumb>
+						</el-breadcrumb>						
 					</el-col>
+					<el-col :span="10" class="content-wrapper" style="margin:10px">	
+						<el-button :type="storeMsg.is_aduit_msg?'success':'danger'" plain>{{storeMsg.is_aduit_msg?'店铺信息审核通过':'店铺信息待审核中'}}</el-button>			
+					</el-col>
+					<el-col :span="10" class="content-wrapper" style="margin:10px">	
+						<el-button :type="storeMsg.is_aduit_food?'success':'danger'" plain>{{storeMsg.is_aduit_food?'食品信息审核通过':'食品信息待审核中'}}</el-button>			
+					</el-col>
+					<!-- 其他部分 -->
 					<el-col :span="24" class="content-wrapper">
 						<transition name="fade" mode="out-in">
 							<router-view>
 								
                             </router-view>
-						</transition>
-						<!--
-						<el-steps :active="active" finish-status="success">
-							<el-step title="完整店铺基本信息">
-								<router-link to = "/store/store-msg">去完成</router-link>
-							</el-step>
-							<el-step title="完善食物信息"></el-step>
-							<el-step title="等待管理员审核"></el-step>
-						</el-steps>
-						-->
+						</transition>						
 					</el-col>
 				</div>
 			</section>
@@ -89,7 +87,8 @@ import bus from '../../bus.js'
 					resource: '',
 					desc: ''
 				},
-				active: 0
+				active: 0,
+				storeMsg:{}
 			}
 		},
 		methods: {
@@ -106,7 +105,6 @@ import bus from '../../bus.js'
 				this.setCookie('storename','',1)
 				this.isLogin()
 			},
-			
 			showMenu(i,status){
 				this.$refs.menuCollapsed.getElementsByClassName('submenu-hook-'+i)[0].style.display=status?'block':'none';
 			},
@@ -121,7 +119,26 @@ import bus from '../../bus.js'
 				}else{
 					this.adminUserName = this.getCookie('storename')
 				}
-			}
+			},
+			// 获取店铺基本数据
+			getStore(){
+				var that = this;
+				// console.log(that.getCookie('storename'))
+				that.$http.post('api/store-msg/find',{
+					name:that.getCookie('storename')
+				},{emulateJSON: true})
+				.then((data)=>{
+					if (data.body.state == 0) {
+						that.$message.error(data.body.message);
+					} else{
+						that.$message({
+							message: data.body.message,
+							type: 'success'
+						});
+						that.storeMsg = data.body.data[0];
+					}
+				})
+			},
 		},
 		mounted() {
 
@@ -129,6 +146,7 @@ import bus from '../../bus.js'
         created(){
 			bus.$emit('show-bar',false)
 			this.isLogin()
+			this.getStore()
 			
         },
 	}
