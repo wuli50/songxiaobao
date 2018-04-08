@@ -89,7 +89,7 @@ export default {
                 that.alert.content = "密码不能为空"
             }else{
                 // 发送请求 判断是否可以登录
-                this.$http.post('http://127.0.0.1:5000/user/login',{
+                this.$http.post('api/user/login',{
                     data:formData
                 }).then(data=>{
                     console.log(data)

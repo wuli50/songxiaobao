@@ -2,19 +2,16 @@
     <div class="user-page">
         <header>
             <!-- blur的路径只能是网络路径 -->
-            <blur :blur-amount=15 :url="getImag(Store.image_path)" class="hed-box">
+            <div class="hed-box">
                 <div class="top">
                     <img src="../../assets/img/返回.png" alt="" @click="back">
                 </div>
                 <div class="hed-main">
-                    <p class="center">
-                        <img :src="getImag(Store.image_path)">
+                    <div class="center">
+                        <img :src="Store.image_path" class="top-img">
                         <ul class="stor-title right">
                             <li><span>{{Store.name}}</span></li>
-                            <li>
-                                <span>配送时间{{Store.opening_hours[0]}}
-                                </span>
-                            </li>
+                            <li>￥0起送 | <span>配送费{{Store.distribution}}元</span></li>
                             <li>
                                 <span style="">
                                     公告：{{Store.promotion_info.slice(0,18)+"..."}}
@@ -22,8 +19,9 @@
                             </li>
                         </ul>
                         <div class="clear"></div> 
-                    </p>
-                    <div class="hed-actives">
+                    </div>
+                    <!-- 活动 -->
+                    <!-- <div class="hed-actives">
                         <ul>
                             <li>
                                 <span :style="{backgroundColor:'#'+ Store.activities[0].icon_color}">
@@ -34,9 +32,9 @@
                                 <div class="clear"></div>
                             </li>
                         </ul>
-                    </div>
+                    </div> -->
                 </div>
-            </blur>
+            </div>
         </header>
 
         <!-- 内容 -->
@@ -80,13 +78,12 @@
                                             <li class="mer-class" v-for = "(food,i) in c.foods"  v-if="i<4">
                                                 <div class="mer-class-box">
                                                     <div class="left">
-                                                        <span v-show="food.is_essential">招牌</span>
-                                                        <img :src="getImag(food.image_path)" alt="">
+                                                        <img :src="food.image_path" alt="">
                                                     </div>
                                                     <div class="right">
                                                         <ul class="mer-main">
                                                             <li>{{food.name}}</li>
-                                                            <li></li>
+                                                            <li><span v-show="food.is_essential">招牌</span></li>
                                                             <li>月售{{food.month_sales}}份</li>
                                                             <li>
                                                                 <p><span>5折</span>每单都有优惠</p>
@@ -114,15 +111,15 @@
                                     </li>
                                 </ul>
                             </div>
-                            <div class="clear"></div>
+                            <div class="clear"></div> 
                         </div>
                         <!-- 店铺 -->
                         <div class="store-main" v-show="index == 1" :key = "1">
                             <div class="msg-top"> 
                                 <h2>配送信息</h2>
-                                <p>{{Store.distribution}}</p>
+                                <p>配送费{{Store.distribution}}元</p>
                             </div>
-                            <div class="msg-ati">
+                            <!-- <div class="msg-ati">
                                 <h2>活动与服务</h2>
                                 <span class="right">{{Store.activities.length}}个活动</span>
                                 <div class="clear"></div>
@@ -132,7 +129,7 @@
                                         <span>{{act.tips}}</span>
                                     </li>
                                 </ul>
-                            </div>
+                            </div> -->
                             <div class="msg-foot">
                                 <ul>
                                     <li>
@@ -150,11 +147,11 @@
                                         <span class="right">{{Store.address}}</span>
                                         <div class="clear"></div>
                                     </li>
-                                    <li>
+                                    <!-- <li>
                                         <h3>评分</h3>
                                         <span class="right">{{Store.opening_hours[0]}}</span>
                                         <div class="clear"></div>
-                                    </li>
+                                    </li> -->
                                 </ul>
                             </div>
                             
@@ -220,7 +217,7 @@ export default {
   name: "store",
   data() {
     return {
-      storeId: this.$route.params.id,
+      storeId: this.$route.params._id,
       Store: {},
       url: "https://o3e85j0cv.qnssl.com/tulips-1083572__340.jpg",
       // 标签页数据
@@ -256,14 +253,7 @@ export default {
   },
   // 注册组件
   components: {
-    Blur,
-    Tab,
-    TabItem,
-    Swiper,
-    SwiperItem,
-    XNumber,
-    Sticky,
-    Badge
+    Blur, Tab, TabItem,Swiper, SwiperItem, XNumber, Sticky, Badge
   },
   // 方法
   methods: {
@@ -271,51 +261,41 @@ export default {
       // this.$router.back();
       location.href = "/";
     },
-    //   拼接图片路径
-    getImag(imgsrc) {
-      var src =
-        "http://fuss10.elemecdn.com/" +
-        imgsrc.slice(0, 1) +
-        "/" +
-        imgsrc.slice(1, 3) +
-        "/" +
-        imgsrc.slice(3);
-      // console.log($)
-      if (imgsrc.endsWith("jpeg")) {
-        src +=
-          ".jpeg" +
-          "?imageMogr/thumbnail/!130x130r/gravity/Center/crop/130x130/";
-        return src;
-      } else if (imgsrc.endsWith("png")) {
-        src +=
-          ".png" +
-          "?imageMogr/thumbnail/!130x130r/gravity/Center/crop/130x130/";
-        return src;
-      }
-    },
     // 获取店家信息
-    getshortList() {
-      var that=this;
-      this.$http
-        .get("http://127.0.0.1:5000/user/store-msg?id="+this.storeId)
-        .then(data => {
-          // console.log(data.body[0])
-          that.Store = data.body[0];
-        });
+    getStore() {
+      var that = this;
+      console.log(that.storeId)
+      that.$http.post('api/store-msg/find',{
+        _id:that.storeId
+      },{emulateJSON: true})
+      .then((data)=>{
+        console.log(data)
+          if (data.body.state == 0) {
+            alert(data.body.message);
+          } else{
+            that.Store = data.body.data[0];
+            
+            that.Store.image_path = '../../.'+data.body.data[0].image_path;
+          }
+      })
     },
     // 获取菜单数据
     getClasslist() {
-      this.$http
-        .get("http://127.0.0.1:5000/user/store-foods?id=" + this.storeId)
+       var that = this;
+      // console.log(that.getCookie('storename'))
+      that.$http.post('api/store-food/find',{
+        restaurant_id:that.storeId
+      },{emulateJSON: true})
         .then(data => {
-          // console.log(data.body)
-          this.classList = data.body;
+          console.log(data.body)
+          this.classList = data.body.data;
           this.classList.forEach((value, index) => {
-            value.foods.forEach((value, index) => {
+            value.foods.forEach((value, i) => {
               var foodName = value.name;
               //一个死坑！！！！【深入响应式原理，查看对象可以发现以下两种方法在Vue中是不同的】
               // https://cn.vuejs.org/v2/guide/reactivity.html
               // this.$set(this.comNum,foodName,0)
+              this.classList[index].foods[i].image_path = '../../.'+data.body.data[index].foods[i].image_path;
               this.$set(this.comNum, foodName, {
                 num: 0,
                 price: value.specfoods_price
@@ -331,8 +311,6 @@ export default {
         document.documentElement.scrollTop ||
         document.body.scrollTop;
       var offsetTop = document.querySelector(".tab").offsetTop;
-      // console.log(offsetTop);
-      // console.log(scrollTop);
       // 监听滚动 控制左侧分类栏
       if (scrollTop > 148) {
         $(".merch>.left").css({
@@ -356,11 +334,12 @@ export default {
     }
   },
   watch() {},
+  // 挂载阶段
   created() {
     // 是否有底部导航条
     bus.$emit("show-bar", false);
     this.getClasslist();
-    this.getshortList();
+    this.getStore();
     this.handleScroll();
   },
   mounted() {
@@ -428,9 +407,14 @@ header ul li {
 }
 .hed-box {
   height: 38vw !important;
+  background-color: rgba(70, 146, 174, 0.5);
+}
+.top-img{
+  width: 20vw;
+  margin-right: 5vw;
 }
 .stor-title {
-  width: calc(100% - 18vw);
+  width: calc(100% - 25vw);
 }
 .stor-title li:nth-of-type(1) {
   font-size: 4.5vw;
@@ -745,7 +729,7 @@ div.money input {
   width: 100vw;
   bottom: 15vw;
   color: #969696;
-  z-index: 1;
+  z-index: 2;
 }
 .orderlist ul{
     padding: 1.5vw;

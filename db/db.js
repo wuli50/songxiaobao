@@ -1,4 +1,5 @@
 
+
 // 加载模块
 const mongoose = require("mongoose");
 // 用es6中的Promise来取代 mongoose里集成的已经过时的
@@ -32,7 +33,7 @@ var storeMsgSchema = new Schema({
     is_aduit_food:Boolean,
     image_path: String
 },{collection: 'store-msg'});
-
+// 创建 store-food 表结构
 var storeFoodSchema = new Schema({
     // 备注
     description:String,
@@ -51,12 +52,18 @@ var storeFoodSchema = new Schema({
     store_name:String,
     restaurant_id:String
 },{collection: 'store-food'})
-
+// 创建用户表
 var userMsgSchema = new Schema({
-    id:Number,
     name:String,
     paw:String,
-    phone:String
+    phone:String,
+    addreses:[{
+        name:String,
+        phone:String,
+        ads:String,
+        msg:String,
+    }],
+
 },{collection: "user-msg"})
 // 一个构造对象
 var StoreMsg = mongoose.model('StoreMsg',storeMsgSchema);

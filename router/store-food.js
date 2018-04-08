@@ -137,5 +137,21 @@ router.post('/edit',(req,res)=>{
     }
   })
 })
+//移除
+router.post('/remove',(req,res)=>{
+  StoreFood.remove(req.body,(err)=>{
+    if(err){
+      res.json({
+          state:0,
+          message:"数据删除失败"
+      })
+    }else{
+      res.json({
+          state:1,
+          message:"数据删除成功"
+      })
+    }
+  })
+})
 // 导出路由
 module.exports = router;

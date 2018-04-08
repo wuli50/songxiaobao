@@ -33,59 +33,8 @@ app.use('/api/store-msg',require("./router/store-msg.js"));
 // 引入食物路由
 app.use('/api/store-food',require("./router/store-food.js"));
 
-// 用户获取店铺信息
-app.get('/store-msg/find', (req, res) => {
-  console.log(req.query.id)
-  // 判断用户的查询条件
-  if (req.query.id == undefined) {
-    // 对数据库数据进行查询；
-    // 参数一：查询条件，参数二：查询结果的回调函数（错误信息，返回数据）
-    StoreMsg.find({}, function (err, data) {
-      if (!err) {
-        res.status(200).send(data)
-      } else {
-        res.status(200).json({
-          message: "数据库读取失败"
-        })
-      }
-    })
-  } else {
-    StoreMsg.find({
-      id: req.query.id
-    }, function (err, data) {
-      if (!err) {
-        res.status(200).send(data)
-      } else {
-        res.status(200).json({
-          message: "数据库读取失败"
-        })
-      }
-    })
-  }
-
-})
-// 用户获取店铺菜品
-app.get('/store-food/find', (req, res) => {
-  StoreMsg.find({
-    id: req.query.id
-  }, function (err, data) {
-    // console.log(data[0]._id)
-    if (!err) {
-      StoreFood.find({
-        restaurant_object_id: data[0]._id
-      }, (err, data) => {
-        console.log(data.length)
-        res.status(200).send(data);
-      }).populate('restaurant_object_id')
-    } else {
-      res.status(200).json({
-        message: "数据库读取失败"
-      })
-    }
-  })
-})
 // 用户登录
-app.post('/user/login', (req, res) => {
+app.post('/api/user/login', (req, res) => {
   var str = "";
   req.on("data", function (chunk) {
     str += chunk;

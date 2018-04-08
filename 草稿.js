@@ -82,6 +82,44 @@ app.options('/store-msg/add', (req, res) => {
       message: 'ok'
     })
   })
+  // 用户首页
+  // 获取天气
+    //   getWeather(){
+    //     //   https://mainsite-restapi.ele.me/bgs/weather/current?latitude=31.96205&longitude=118.85778
+    //       this.$http.get('/ele/bgs/weather/current?latitude=31.96205&longitude=118.85778')
+    //         .then((data)=>{
+    //             // console.log(data);
+    //             this.weather = data.body
+    //         })
+    //   },
+    
+    //   获取热门推荐
+    getHot(){
+      this.$http.get('/ele/shopping/v3/hot_search_words?latitude=31.96205&longitude=118.85778')
+        .then((data)=>{
+            this.hot = data.body;
+        })
+  },
+  
+    //   拼接图片路径
+    getImag(imgsrc){
+      var src = "http://fuss10.elemecdn.com/"+imgsrc.slice(0,1)+"/"+imgsrc.slice(1,3)+"/"+imgsrc.slice(3);
+      // console.log($)
+      if(imgsrc.endsWith('jpeg')){
+          src += ".jpeg" + "?imageMogr/thumbnail/!130x130r/gravity/Center/crop/130x130/"
+          return src;
+      }else if(imgsrc.endsWith('png')){
+          src += ".png" +　"?imageMogr/thumbnail/!130x130r/gravity/Center/crop/130x130/"
+          return src;
+      }
+  },
+  // 点击展开优惠活动
+  showAti(event){
+    // console.log($(event.target).parent('.footer'))
+    $(event.target).parent('.footer').find('.ati:gt(1)').each((index,value)=>{
+        $(value).toggle(200);
+    })
+},
 
   // admin、storeFood
   // 查询店铺

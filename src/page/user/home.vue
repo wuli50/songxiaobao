@@ -7,10 +7,11 @@
                     <img src="../../assets/img/home/address.png" alt="">
                     <span class="ads-name">{{address}}</span>
                 </div>
-                <div class="weather">
+                <!-- 天气 -->
+                <!-- <div class="weather">
                     {{weather.description}}
                     <img :src="getImag(weather.image_hash)" alt=""  class = "wetimg">
-                </div>
+                </div> -->
                 <div class="clear"></div>
             </div>
             <div class="main-fix" :class="findFixed == true? 'findFixed':''">
@@ -21,8 +22,8 @@
                     </router-link>
                 </div>
             </div>
-            
-            <div class="hot table-responsive">
+            <!-- 热门精选 -->
+            <!-- <div class="hot table-responsive">
                  <table class="table" id="hot">
                     <tbody>
                         <tr>
@@ -30,7 +31,7 @@
                         </tr>
                     </tbody>
                 </table>
-            </div>
+            </div> -->
         </nav>
 
         <!--分类轮播-->
@@ -96,25 +97,18 @@
                     </div>
                 </swiper-item>    
         </swiper>
-
-        <!-- 图片横幅 -->
-        <!-- <div class="big-pic">
-            <a href="">
-                <img src="https://fuss10.elemecdn.com/3/c8/45b2ec2855ed55d90c45bf9b07abbpng.png?imageMogr/thumbnail/!710x178r/gravity/Center/crop/710x178/" alt="">
-            </a>
-        </div> -->
         <!-- 商家列表 -->
         <div class="store-list">
             <card :header="{title:'------ 推荐商家 ------'}">
                 <ul slot="content" class="list-store">
                     <li v-for="sto in storeList">
-                        <router-link class="list-box"  :to='{name:"store",params:{id:sto.id}}'>
-                            <img :src="getImag(sto.image_path)" alt="" class="image-title">
+                        <router-link class="list-box"  :to='{name:"store",params:{_id:sto._id}}'>
+                            <img :src="sto.image_path" alt="" class="image-title">
                             <div class="store-main">
                                 <ul class="main" >
                                     <li class="main1">
                                         <div class="left">
-                                            <span v-if="sto.is_new">新店</span>
+                                            <!-- <span v-if="sto.is_new">新店</span> -->
                                             {{sto.name}}</div>
                                         <div class="right">
                                             <span>票</span>
@@ -122,7 +116,7 @@
                                         <div class="clear"></div>
                                     </li>
                                     <li class="main2">
-                                        <div class="left">月售4750 评分:{{sto.rating}}</div>
+                                        <!-- <div class="left">月售4750 评分:{{sto.rating}}</div> -->
                                         <div class="right">
                                             <span>小宝专送</span>
                                         </div>
@@ -130,12 +124,13 @@
                                     </li>
                                     <li class="main3">
                                         <div class="left">￥0起送 |
-                                            <span>{{sto.distribution}}</span></div>
+                                            <span>配送费{{sto.distribution}}元</span></div>
                                         <div class="right">30分钟</div>
                                         <div class="clear"></div>
                                     </li>
                                 </ul>
-                                <ul class="footer">
+                                <!-- 活动 -->
+                                <!-- <ul class="footer">
                                     <li class="ati-num" @click.prevent = "showAti">
                                                 {{sto.activities.length}}个活动
                                     </li>
@@ -144,7 +139,7 @@
                                         <span>{{act.tips}}</span>
                                     </li>
                                     
-                                </ul>     
+                                </ul>      -->
                             </div>
                             <div class="clear"></div>
                         </router-link>
@@ -175,7 +170,6 @@ export default {
       return {
           address:"福州市",
           weather:{},
-          hot:{},
           storeList:[],
         //   监听滚动事件
           findFixed:false,
@@ -188,50 +182,18 @@ export default {
       Card 
   },
   methods:{
-    // 获取天气
-    //   getWeather(){
-    //     //   https://mainsite-restapi.ele.me/bgs/weather/current?latitude=31.96205&longitude=118.85778
-    //       this.$http.get('/ele/bgs/weather/current?latitude=31.96205&longitude=118.85778')
-    //         .then((data)=>{
-    //             // console.log(data);
-    //             this.weather = data.body
-    //         })
-    //   },
-    //   获取热门推荐
-      getHot(){
-          this.$http.get('/ele/shopping/v3/hot_search_words?latitude=31.96205&longitude=118.85778')
-            .then((data)=>{
-                this.hot = data.body;
-            })
-      },
     //   获取推荐商家
-      getshortList(){
-          this.$http.get('http://127.0.0.1:5000/user/store-msg')
-            .then((data)=>{
-                // 剪切选取需要的需要的数据
-                console.log(data.body)
-                this.storeList = data.body;
-            })
-      },
-    //   拼接图片路径
-    getImag(imgsrc){
-        var src = "http://fuss10.elemecdn.com/"+imgsrc.slice(0,1)+"/"+imgsrc.slice(1,3)+"/"+imgsrc.slice(3);
-        // console.log($)
-        if(imgsrc.endsWith('jpeg')){
-            src += ".jpeg" + "?imageMogr/thumbnail/!130x130r/gravity/Center/crop/130x130/"
-            return src;
-        }else if(imgsrc.endsWith('png')){
-            src += ".png" +　"?imageMogr/thumbnail/!130x130r/gravity/Center/crop/130x130/"
-            return src;
-        }
-    },
-    // 点击展开优惠
-    showAti(event){
-        // console.log($(event.target).parent('.footer'))
-        $(event.target).parent('.footer').find('.ati:gt(1)').each((index,value)=>{
-            $(value).toggle(200);
+    getStoreList(obj){
+        var that = this;
+        that.$http.post('api/store-msg/find',obj,{emulateJSON: true})
+        .then((data)=>{
+            that.storeList = data.body.data;
+            for(var i=0; i<data.body.data.length;i++){
+                that.storeList[i].image_path = '../../.' + data.body.data[i].image_path;
+            }
         })
     },
+    
     // 滚动监听
     handleScroll () {
         var scrollTop = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop
@@ -258,10 +220,8 @@ export default {
     },
   },
   created(){
-      bus.$emit('show-bar',true)
-      this.getWeather();
-      this.getHot();
-      this.getshortList();
+      bus.$emit('show-bar',true);
+      this.getStoreList({is_aduit_food:true,is_aduit_msg:true});
   },
   mounted(){
       window.addEventListener('scroll', this.handleScroll)

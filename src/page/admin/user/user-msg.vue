@@ -7,36 +7,44 @@
                     <el-input v-model="filters.name" placeholder="请输入姓名"></el-input>
                 </el-form-item>
                 <el-form-item>
-                    <el-button type="primary">查询</el-button>
-                </el-form-item>
-                <el-form-item>
-                    <el-button type="primary">新增</el-button>
-                </el-form-item>
+					<el-button type="primary" @click="getUserList({name:filters.name})">查询</el-button>
+					<el-button type="primary" @click="getUserList()">显示所有</el-button>
+				</el-form-item>
             </el-form>
         </el-col>
-        <!-- 列表 -->
-        <el-table :data="userList" style="width: 100%" height="250"  @selection-change="selsChange">
+        <!-- 用户列表 -->
+        <el-table :data="userList" style="width: 100%" height="600">
             <el-table-column  type="selection" width="55">
             </el-table-column>
-            <el-table-column fixed prop="id" label="id"  width="150">
-            </el-table-column>
-            <el-table-column prop="name" label="姓名" width="120">
-            </el-table-column>
-            <el-table-column prop="paw" label="密码" width="120">
-            </el-table-column>
-            <el-table-column prop="phone" label="手机号" width="180">
-            </el-table-column>
-            <el-table-column label="操作" width="180"  fixed="right">
+            <!-- 分类用户地址 --> <!-- 列内插入 -->
+            <el-table-column type="expand">
                 <template slot-scope="scope">
-                    <el-button size="small" @click="showEditForm(scope.row)">编辑</el-button>
-                    <el-button type="danger" size="small" @click="remove(scope.row)">删除</el-button>
+                    <!-- 食物列表 -->
+                    <el-table :data="scope.row.addreses" height="250" border style="width: 80%">
+                        <el-table-column prop="name" label="昵称" width="120"></el-table-column>
+                        <el-table-column prop="ads" label="地址" width="120"></el-table-column>
+                        <el-table-column prop="msg" label="地址详情" width="120"></el-table-column>
+                        <el-table-column prop="phone" label="联系方式" width="120"></el-table-column>
+                        <el-table-column label="操作" width="150" >
+                            <template slot-scope="foodscope">
+                                <el-button type="danger" size="small" @click="removeAds(scope.row,adsscope.row)">删除</el-button>
+                            </template>
+                        </el-table-column>
+                    </el-table>
+                </template>
+            </el-table-column>
+            <el-table-column prop="name" label="用户名" width="120"></el-table-column>
+            <el-table-column prop="paw" label="密码" width="200"></el-table-column>
+            <el-table-column prop="phone" label="联系方式" width="200"></el-table-column>
+            <!-- 操作  fixed="right"-->
+            <el-table-column label="操作" width="300" >
+                <template slot-scope="scope">
+                    <el-button type="primary" size="small" @click="showUserEdit(scope.row)">编辑</el-button>
+                    <el-button type="danger" size="small" @click="removeUSer(scope.row)">删除</el-button>
                 </template>
             </el-table-column>
         </el-table>
-        <!-- 工具条 -->
-        <el-col :span="24" class="toolbar">
-            <el-button type="danger" @click="batchRemove" :disabled="this.sels.length===0">批量删除</el-button>
-        </el-col>
+
         <!-- 编辑界面 editForm -->
         <el-dialog title="编辑" :visible.sync="editFormShow" :close-on-click-modal="false">
 			<el-form :model="editForm" label-width="80px" ref="editForm">
@@ -74,52 +82,98 @@ export default {
       sels: [],
     //   编辑数据
         editFormShow:false,
+        editUserId:'',
         editForm:{
 
         }
     };
   },
   methods: {
-    //   删除
-    remove(row) {
-      //列表信息
-      console.log(row);
-    },
-    // 批量删除
-    batchRemove() {
-      var ids = this.sels.map(item => item.id).toString();
-    },
-    // 监听选中列的变化
-    selsChange(sels) {
-      console.log(this.sels);
-      this.sels = sels;
-    },
-    // 显示编辑页面
-    showEditForm(row){
+    //   用户信息列表
+    getUserList(obj){
         var that = this;
-        utils.findUser(that,row.name,function(data){
-            if (data.state == 0) {
-                that.$message.error(data.message);
-            } else {
-                that.editForm = data.data[0];
-                that.editFormShow = true;
+        that.$http.post('api/user-msg/find',obj,{emulateJSON: true})
+        .then((data)=>{
+            if (data.body.state == 0) {
+                that.$message.error(data.body.message);
+            } else{
+                that.$message({
+                    message: data.body.message,
+                    type: 'success'
+                });
+                that.userList = data.body.data;
             }
         })
     },
+    // 展示用户编辑
+    showUserEdit(row){
+        var that = this;
+        that.$http.post('api/user-msg/find',{_id:row._id},{emulateJSON: true})
+        .then((data)=>{
+            console.log(data);
+            that.editForm = data.body.data[0];
+            that.editUserId = row._id
+            that.editFormShow = true
+        })
+    },
+    // 提交对用户的修改
     editSubmit(){
-
-    }
+        var that = this;
+        that.$http.post('api/user-msg/edit',{
+            tip:{_id:that.editUserId},
+            message:that.editForm
+        },{emulateJSON: true})
+        .then((data)=>{
+            if (data.body.state == 0) {
+                that.$message.error(data.body.message);
+            } else{
+                that.$message({
+                    message: data.body.message,
+                    type: 'success'
+                });
+                that.getUserList();
+            }
+        })
+    },
+     // 删除用户
+    removeUser(row){
+        var that = this;
+        that.$http.post('api/user-msg/remove',{_id:row._id},{emulateJSON: true})
+        .then((data)=>{
+            if (data.body.state == 0) {
+                that.$message.error(data.body.message);
+            } else{
+                that.$message({
+                    message: data.body.message,
+                    type: 'success'
+                });
+                that.getUserList();
+            }
+        })
+    } ,
+    // 删除用户地址
+    removeAds(user,ads){
+        var that = this;
+        that.$http.post('api/store-food/edit',{
+            tip:{_id:user._id},
+            message:{ $pull: { addreses: { _id: ads._id }}}
+        },{emulateJSON: true})
+        .then((data)=>{
+            if (data.body.state == 0) {
+                that.$message.error(data.body.message);
+            } else{
+                that.$message({
+                    message: data.body.message,
+                    type: 'success'
+                });
+                that.getUserList();
+            }
+        })
+    },
   },
   mounted() {
     var that = this;
-    utils.findUser(that, "noname", function(data) {
-      console.log(data);
-      if (data.state == 0) {
-        that.$message.error(data.message);
-      } else {
-        that.userList = data.data;
-      }
-    });
+    that.getUserList()
   }
 };
 </script>

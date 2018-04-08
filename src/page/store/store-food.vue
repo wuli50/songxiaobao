@@ -39,7 +39,7 @@
                             <!-- month_sales -->
                             <el-table-column label="操作" width="150" >
                                 <template slot-scope="foodscope">
-                                    <el-button type="danger" size="small" @click="remove(foodscope.row)">删除</el-button>
+                                    <el-button type="danger" size="small" @click="removeFood(scope.row,foodscope.row)">删除</el-button>
                                 </template>
                             </el-table-column>
                         </el-table>
@@ -52,7 +52,7 @@
                     <template slot-scope="scope">
                         <el-button size="small" @click="showClassEditForm(scope.row)">编辑</el-button>
                         <el-button size="small" type="primary" @click="showAddFood(scope.row)">添加食品</el-button>
-                        <el-button type="danger" size="small" @click="remove(scope.row)">删除</el-button>
+                        <el-button type="danger" size="small" @click="removeClass(scope.row)">删除</el-button>
                     </template>
                 </el-table-column>
             </el-table>
@@ -327,6 +327,42 @@ export default {
             }
         })
     },
+    // 删除分类
+            removeClass(row){
+                var that = this;
+				that.$http.post('api/store-food/remove',{_id:row._id},{emulateJSON: true})
+				.then((data)=>{
+					if (data.body.state == 0) {
+						that.$message.error(data.body.message);
+					} else{
+						that.$message({
+							message: data.body.message,
+							type: 'success'
+						});
+						that.getFoodList();
+					}
+				})
+            } ,
+            // 删除菜品
+            removeFood(msg,food){
+                console.log(msg)
+                var that = this;
+                that.$http.post('api/store-food/edit',{
+                    tip:{_id:msg._id},
+                    message:{ $pull: { foods: { _id: food._id }}}
+                },{emulateJSON: true})
+                .then((data)=>{
+					if (data.body.state == 0) {
+						that.$message.error(data.body.message);
+					} else{
+						that.$message({
+							message: data.body.message,
+							type: 'success'
+						});
+						that.getFoodList();
+                    }
+                })
+            },
     //获取到图片文件
     onfilechange: function(e) {
       console.log(e.target.files);
