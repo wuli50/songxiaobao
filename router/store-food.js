@@ -5,6 +5,9 @@ var Song = require("../db/db.js");
 // 导入读取图片数据的功能模块
 var formidable = require('formidable');
 // 导入读取项目文件的功能模块
+var cookieParser = require('cookie-parser')
+var app = express()
+app.use(cookieParser());
 var fs = require("fs");
 var path = require('path');
 
@@ -65,7 +68,74 @@ router.post('/find', (req, res) => {
 })
 // 添加食物【修改分类】
 router.post('/addfood',(req,res)=>{
-   
+  var  uploadDir = './static/store_food_image';
+  var form = new formidable.IncomingForm();
+  //文件的编码格式
+  form.encoding = 'utf-8';
+  //文件的上传路径
+  form.uploadDir = uploadDir;
+  //文件的后缀名
+  form.extensions = true;
+  //文件的大小限制
+  form.maxFieldsSize = 2 * 1024 * 1024;
+  form.parse(req, function (err, fields, files){
+    var food = fields;
+    var file = files.image_path;
+    var oldpath = path.normalize(file.path);
+    var newfilename = fields.name + '.jpg';
+    var newpath = uploadDir + '/food' + newfilename;
+    var foodmsg = {
+      name:food.name,
+      // 招牌？
+      is_essential:food.is_essential,
+      // 月售
+      month_sales:food.month_sales,
+      // 价格
+      specfoods_price:food.specfoods_price
+    }
+    console.log(foodmsg)
+    fs.rename(oldpath, newpath, function (err) {
+      if (err) {
+        res.json({
+          message: "图片存储失败，请重新提交",
+          state: 0
+        })
+      } else {
+        foodmsg.image_path = newpath;
+        //update对数据进行修改
+        StoreFood.update({_id:req.cookies.class_id},{$push:{"foods":foodmsg}},(err)=>{
+            if(err){
+              res.json({
+                  state:0,
+                  message:"数据修改失败"
+              })
+            }else{
+              res.json({
+                  state:1,
+                  message:"数据修改成功"
+              })
+            }
+        })
+      }
+    });
+  })
+
+})
+// 修改食物分类和食物详情
+router.post('/edit',(req,res)=>{
+  StoreFood.update(req.body.tip,req.body.message,(err)=>{
+    if(err){
+      res.json({
+          state:0,
+          message:"数据修改失败"
+      })
+    }else{
+      res.json({
+          state:1,
+          message:"数据修改成功"
+      })
+    }
+  })
 })
 // 导出路由
 module.exports = router;

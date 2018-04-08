@@ -16,15 +16,32 @@
                 </el-form>
             </el-col>
             <!-- 食品列表 -->
-            <el-table :data="foodsList" style="width: 100%" height="250"  @selection-change="selsChange">
+            <el-table :data="foodsList" style="width: 100%" height="600"  @selection-change="selsChange">
                 <el-table-column  type="selection" width="55">
                 </el-table-column>
                 <!-- 分类具体食物 -->
                 <el-table-column type="expand">
-                    <template slot-scope="props">
-                        <el-table :data="foods"
-                            height="250" border style="width: 100%">
-                            <!-- <el-table-column prop="name" label="食品名称" width="180"></el-table-column> -->
+                    <!-- 列内插入 -->
+                    <template slot-scope="scope">
+                        <!-- 食物列表 -->
+                        <el-table :data="scope.row.foods" height="250" border style="width: 80%">
+                            <el-table-column prop="name" label="食物名称" width="120"></el-table-column>
+                            <el-table-column prop="specfoods_price" label="价格（元）" width="120"></el-table-column>
+                            <el-table-column prop="month_sales" label="月售量" width="120"></el-table-column>
+                            <el-table-column prop="is_essential" label="品牌" width="120">
+                                <template slot-scope="foodscope">
+                                    <el-tag
+                                    :type="foodscope.row.is_essential ? 'success':'primary' "
+                                    close-transition>{{foodscope.row.is_essential ?'品牌':'非品牌'}}</el-tag>
+                                </template>
+                            </el-table-column>
+                            <!-- month_sales -->
+                            <el-table-column label="操作" width="150" >
+                                <template slot-scope="foodscope">
+                                    <el-button size="small" @click="showFoodEditForm(foodscope.row)">编辑</el-button>
+                                    <el-button type="danger" size="small" @click="remove(foodscope.row)">删除</el-button>
+                                </template>
+                            </el-table-column>
                         </el-table>
                     </template>
                 </el-table-column>
@@ -40,24 +57,36 @@
                 </el-table-column>
             </el-table>
         </div>
-        <!-- 编辑界面 editForm -->
-        <!-- <el-dialog title="编辑" :visible.sync="editFormShow" :close-on-click-modal="false">
-            <el-form :model="editForm" label-width="80px" ref="editForm">
-                <el-form-item label="姓名" prop="name">
-                    <el-input v-model="editForm.name" auto-complete="off"></el-input>
+        <!-- 编辑类别界面 editForm -->
+        <el-dialog title="编辑" :visible.sync="editClassFormShow" :close-on-click-modal="false">
+            <el-form :model="editFoodClassForm" label-width="80px" ref="editFoodClassForm">
+                <el-form-item label="分类名" prop="name">
+                    <el-input v-model="editFoodClassForm.name" auto-complete="off"></el-input>
                 </el-form-item>
-                <el-form-item label="密码" prop="paw">
-                    <el-input v-model="editForm.paw" auto-complete="off"></el-input>
-                </el-form-item>
-                <el-form-item label="手机号" prop="phone">
-                    <el-input v-model="editForm.phone" auto-complete="off"></el-input>
+                <el-form-item label="公告" prop="description">
+                    <el-input v-model="editFoodClassForm.description" auto-complete="off"></el-input>
                 </el-form-item>
             </el-form>
             <div slot="footer" class="dialog-footer">
-                <el-button @click.native="editFormShow = false">取消</el-button>
-                <el-button type="primary" @click.native="editSubmit" >提交</el-button>
+                <el-button @click.native="editClassFormShow = false">取消</el-button>
+                <el-button type="primary" @click.native="editClassSubmit" >提交</el-button>
             </div>
-        </el-dialog> -->
+        </el-dialog>
+         <!-- 编辑食物界面 editForm -->
+        <el-dialog title="编辑" :visible.sync="editFoodFormShow" :close-on-click-modal="false">
+            <el-form :model="editFoodForm" label-width="80px" ref="editFoodClassForm">
+                <el-form-item label="分类名" prop="name">
+                    <el-input v-model="editFoodForm.name" auto-complete="off"></el-input>
+                </el-form-item>
+                <el-form-item label="公告" prop="description">
+                    <el-input v-model="editFoodForm.description" auto-complete="off"></el-input>
+                </el-form-item>
+            </el-form>
+            <div slot="footer" class="dialog-footer">
+                <el-button @click.native="editFoodFormShow = false">取消</el-button>
+                <el-button type="primary" @click.native="editFoodSubmit" >提交</el-button>
+            </div>
+        </el-dialog>
 
         <!-- 新增食物分类界面 -->
         <el-dialog title="新增菜品分类" :visible.sync="addFoodClassShow" :close-on-click-modal="false">
@@ -74,33 +103,39 @@
                 <el-button type="primary" @click.native="addclassSubmit" >提交分类添加</el-button>
             </div>
         </el-dialog>
+        <!-- 新增食物分类界面 -->
+        <el-dialog title="修改菜品分类" :visible.sync="addFoodClassShow" :close-on-click-modal="false">
+            <el-form :model="FoodClassForm" label-width="80px" ref="FoodClassForm">
+                <el-form-item label="分类名" prop="name">
+                    <el-input v-model="FoodClassForm.name" auto-complete="off"></el-input>
+                </el-form-item>
+                <el-form-item label="公告" prop="description">
+                    <el-input v-model="FoodClassForm.description" auto-complete="off"></el-input>
+                </el-form-item>
+            </el-form>
+            <div slot="footer" class="dialog-footer">
+                <el-button @click.native="editFormShow = false">取消</el-button>
+                <el-button type="primary" @click.native="addclassSubmit" >提交分类添加</el-button>
+            </div>
+        </el-dialog>
 
         <!-- 新增分类食物 -->
         <el-dialog title="新增食物" :visible.sync="addFoodShow" :close-on-click-modal="false">
-            <el-form label-width="80px" ref="foods">
-                <el-card class="box-card"  v-for="(food, index) in foods" >
-                    <div slot="header" class="clearfix">
-                        <span>添加食品</span>
-                        <el-button @click.prevent="removeFood(index)">删除</el-button>
-                    </div>
-                    <div class="text item">
-                        <el-form-item label="名称" prop="name">
-                            <el-input v-model="food.name" auto-complete="off">{{index}}</el-input>
-                        </el-form-item>
-                        <el-form-item label="价格" prop="specfoods_price'">
-                            <el-input v-model="food.specfoods_price" auto-complete="off"></el-input>
-                        </el-form-item>
-                        <el-form-item label="品牌商品" prop="is_essential'">
-                            <el-switch v-model="food.is_essential"></el-switch>
-                        </el-form-item>
-                        <el-form-item label="食品照片" prop="image_path">
-                            <input type="file" name="image_path"  @change="onfilechange(index,$event)">
-                        </el-form-item>
-                    </div>
-                </el-card>
-                <el-form-item>
-                    <el-button @click="addFood" style="margin-top:10px">新增食物</el-button>
-                </el-form-item>
+            <el-form label-width="80px" ref="food" :model="food">
+                <div class="text item">
+                    <el-form-item label="名称" prop="name">
+                        <el-input v-model="food.name" auto-complete="off"></el-input>
+                    </el-form-item>
+                    <el-form-item label="价格" prop="specfoods_price'">
+                        <el-input v-model="food.specfoods_price" auto-complete="off"></el-input>
+                    </el-form-item>
+                    <el-form-item label="品牌商品" prop="is_essential'">
+                        <el-switch v-model="food.is_essential"></el-switch>
+                    </el-form-item>
+                    <el-form-item label="食品照片" prop="image_path">
+                        <input type="file" name="image_path"  @change="onfilechange">
+                    </el-form-item>
+                </div>
             </el-form>
             <div slot="footer" class="dialog-footer">
                 <el-button @click.native="editFormShow = false">取消</el-button>
@@ -125,7 +160,7 @@ export default {
         foodsList: [],
       //列表选中列
         sels: [],
-    //   编辑数据
+      // 编辑数据
         editFormShow:false,
         editForm:{
         },
@@ -134,18 +169,31 @@ export default {
             description : "",
             name : "汉堡类",
         },
+        // 修改分类
+        editClassFormShow:false,
+        editClassid:'',
+        editFoodClassForm:{
+            description : "",
+            name : "",
+        },
+        // 新增食物
         addFoodShow:false,
         // 添加食物所在的分类_id
         add_class_is:'',
-        foods : [ 
-            {
-                name : "",
-                is_essential : false,
-                image_path : "",
-                month_sales : 0,
-                specfoods_price : 11.0,
-            }
-        ],
+        food:{
+            name : "",
+            is_essential : false,
+            image_path : "",
+            month_sales : 0,
+            specfoods_price : 11.0,
+        },
+        // 修改食物
+        editFoodFormShow:false,
+        editFoodid:'',
+        editFoodForm:{
+            description : "",
+            name : "",
+        },
     };
   },
   methods: {
@@ -166,12 +214,6 @@ export default {
             }
         })
     },
-    // 展示添加食物列表
-    showAddFood(row){
-        var that = this;
-        that.addFoodShow = true;
-        that.add_class_is = row.add_class_is
-    },
     //   删除
     remove(row) {
       //列表信息
@@ -181,12 +223,6 @@ export default {
     selsChange(sels) {
       console.log(this.sels);
       this.sels = sels;
-    },
-    // 显示分类编辑页面
-    showClassEditForm(row){
-        var that = this;
-        //读取相应分类信息
-        
     },
     // 添加分类
     addclassSubmit(){
@@ -207,42 +243,93 @@ export default {
             }
         })
     },
-    // 表单添加食物
-    addFood(){
-        this.foods.push( {
-            name : "",
-            is_essential : false,
-            image_path : "",
-            month_sales : 0,
-            specfoods_price : 11.0,
-        });
+    // 修改分类
+    // 显示分类编辑页面
+    showClassEditForm(row){
+        var that = this;
+        //读取相应分类信息
+        that.editClassFormShow = true
+        that.$http.post('api/store-food/find',{_id:row._id},{emulateJSON: true})
+        .then((data)=>{
+            that.editFoodClassForm = data.body.data[0];
+            that.editClassid = row._id
+        })
     },
-    // 移除食物
-    removeFood(index) {
-        if (index !== -1) {
-          this.foods.splice(index, 1)
-        }
+    // 提交分类修改
+    editClassSubmit(){
+        var that = this;
+        that.$http.post('api/store-food/edit',{
+            tip:{_id:that.editClassid},
+            message:that.editFoodClassForm
+        },{emulateJSON: true})
+        .then((data)=>{
+            if (data.body.state == 0) {
+                that.$message.error(data.body.message);
+            } else{
+                that.$message({
+                    message: data.body.message,
+                    type: 'success'
+                });
+                that.getFoodList({store_name:that.getCookie('storename')})
+            }
+        })
+    },
+    // 添加食物
+    // 展示添加食物列表[存储类的_id]
+    showAddFood(row){
+        var that = this;
+        that.addFoodShow = true;
+        that.add_class_is = row._id;
+        that.setCookie("class_id",row._id,1)
     },
     // 提交添加食品
     addFoodSubmit(){
         var that = this;
-        that.$http.post('api/store-food/addfood',{
-            class_id:that.add_class_is,
-            data:that.foods
-        },{emulateJSON: true})
+        var formdata = new FormData();
+        //读取data中所要上传的内容循环append到fordata中
+        for (var key in that.food) {  
+            if (key) {
+                formdata.append(key, that.food[key])
+                }
+            }
+            that.$http.post('api/store-food/addfood',formdata,{
+            headers:{'Content-Type':'multipart/form-data'}
+        })
         .then((data)=>{
-
+            if (data.body.state == 0) {
+                that.$message.error(data.body.message);
+            } else{
+                that.$message({
+                message: data.body.message,
+                type: 'success'
+                });
+                // that.getFoodList({store_name:that.getCookie('storename')})
+            }
         })
     },
+    // 修改food
+    showFoodEditForm(row){
+        var that = this;
+        //读取相应分类信息
+        that.editFoodFormShow = true;
+        that.$http.post('api/store-food/find',{'food._id':row._id},{emulateJSON: true})
+        .then((data)=>{
+            console.log(data)
+            // that.editFoodClassForm = data.body.data[0];
+            // that.editClassid = row._id
+        })
+
+    },
     //获取到图片文件
-    onfilechange: function(index,e) {
+    onfilechange: function(e) {
+      console.log(e.target.files);
         var files = e.target.files || e.dataTransfer.files;
-        if (!files.length) 
-            {
-                return
-            }
-        this.foods[index].image_path = files[0];
-    }
+      if (!files.length) 
+      {
+        return
+      }
+      this.food.image_path = files[0];
+    },
   },
   mounted() {
   },
