@@ -29,11 +29,12 @@
                 <cell-box :border-intent="false" class="item">
                     <x-input title="确认密码" type="password" placeholder="请再次输入密码" v-model="user.password2" @on-blur = "pawConfirme"></x-input>
                 </cell-box>
+                <x-button type="primary" @click.native="updatePaw">确认修改</x-button>
             </template>
         </group>
         <alert v-model="showAlert" :title="alert.title" is-link>{{alert.content}}</alert>
         <group  class="btn-out">
-            <x-button plain type="primary">退出登陆</x-button>
+            <x-button plain type="primary" @click.native="logout">退出登陆</x-button>
         </group>
 
     </div>  
@@ -51,7 +52,7 @@ export default {
     data(){
         return{
             user:{
-                name:"小宝",
+                name:this.getCookie('username'),
                 password1:"",
                 password2:"",
             },
@@ -61,10 +62,10 @@ export default {
             showUserPaw:false,
             showAlert:false,
             alert:{
-                title:"操作失败",
+                title:"提示",
                 count:''
             }
-        }
+        } 
     },
     methods:{
         pawConfirme:function(){
@@ -73,6 +74,25 @@ export default {
                 that.showAlert = true;
                 that.alert.content = "两次密码不一致，你要不在确认一哈"
             }
+        },
+        //   退出登录
+        logout(){
+            this.setCookie('username','',1)
+            this.$router.push({ path: '/login'})
+        },
+        // 确认修改密码
+        updatePaw(){
+            console.log(12)
+            var that = this;
+            // 查询条件，修改内容
+            that.$http.post('api/user-msg/edit',{
+                find:{name:that.user.name},
+                message:{paw:that.user.password1}
+            },{emulateJSON: true})
+            .then((data)=>{
+                that.showAlert = true;
+                that.alert.content = data.body.message;
+            })
         },
     },
     created(){

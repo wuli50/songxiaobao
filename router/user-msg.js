@@ -38,22 +38,6 @@ router.post('/find', (req, res) => {
         }
     })
 })
-// 修改食物分类和食物详情
-router.post('/edit',(req,res)=>{
-    UserMsg.update(req.body.tip,req.body.message,(err)=>{
-      if(err){
-        res.json({
-            state:0,
-            message:"数据修改失败"
-        })
-      }else{
-        res.json({
-            state:1,
-            message:"数据修改成功"
-        })
-      }
-    })
-})
 //移除
 router.post('/remove',(req,res)=>{
     UserMsg.remove(req.body,(err)=>{
@@ -69,7 +53,59 @@ router.post('/remove',(req,res)=>{
         })
       }
     })
-  })
+})
+// 登录
+router.post('/login',(req,res)=>{
+    UserMsg.find({name:req.body.name},(err,data)=>{
+        if(err){
+          res.json({
+            message:"数据库读取失败",
+            state:0
+          })
+        }else{
+            if(data.length == 0){
+                res.json({
+                    message:"该用户名不存在，快去注册一个吧",
+                    state:0
+                })
+            }else{
+                console.log(req.body.paw)
+                if(data[0].paw == req.body.paw){
+                    var time = new Date(); 
+                    time.setHours(time.getHours()+48);
+                    res.cookie('username',req.body.name,{expires:time});
+                    res.json({
+                        message:"登录成功",
+                        state:1
+                    })
+                    
+                }else{
+                    res.json({
+                        message:"密码错误",
+                        state:0
+                    }) 
+                }
+            }
+        }
+    })
+})
+// 修改用户信息
+router.post('/edit',(req,res)=>{
+    console.log(req.body.find)
+    UserMsg.update(req.body.find,req.body.message,(err)=>{
+      if(err){
+        res.json({
+            state:0,
+            message:"数据修改失败"
+        })
+      }else{
+        res.json({
+            state:1,
+            message:"数据修改成功"
+        })
+      }
+    })
+})
 
 // 导出路由
 module.exports = router;

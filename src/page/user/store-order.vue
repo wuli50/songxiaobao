@@ -150,6 +150,7 @@ export default {
         this.showtoast = !this.showtoast;
       }, 1000);
     },
+    //支付
     toOrderMsg(){
       //将订单信息存入数据库，跳转订单详情 
       setTimeout(() => {

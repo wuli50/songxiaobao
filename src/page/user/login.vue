@@ -14,7 +14,7 @@
                 <group class="login-group"
                 title="已经注册了的小宝这里登录勒" label-width="20vw" label-margin-right="5vw" label-align="justify">
                     <x-input title="用户名" v-model="userLogin.name" :required="true"></x-input>
-                    <x-input title="密码" type="password" placeholder="必填" v-model="userLogin.psw" :required="true"></x-input>
+                    <x-input title="密码" type="password" placeholder="必填" v-model="userLogin.paw" :required="true"></x-input>
                 </group>
                 <x-button action-type="submit" :gradients="['#1D62F0', '#19D5FD']">登录</x-button>
             </form>
@@ -59,7 +59,7 @@ export default {
             },
             userLogin:{
                 name:"",
-                psw:"",
+                paw:"",
             },
             addressData: ChinaAddressData,
             showAlert:false,
@@ -79,8 +79,6 @@ export default {
         // 登录
         submitLogin(){
             var that = this;
-            var formData = JSON.stringify(this.userLogin);
-            console.log(formData);
             if(that.userLogin.name == ''){
                 that.showAlert = true;
                 that.alert.content = "用户名不能为空"
@@ -89,18 +87,14 @@ export default {
                 that.alert.content = "密码不能为空"
             }else{
                 // 发送请求 判断是否可以登录
-                this.$http.post('api/user/login',{
-                    data:formData
-                }).then(data=>{
+               that.$http.post('api/user-msg/login',that.userLogin,{emulateJSON: true})
+                .then(data=>{
                     console.log(data)
-                    if(data.body.state == 0){
-                        that.showAlert = true;
-                        that.alert.content = data.body.message
-                    }else{
-                        that.showAlert = true;
-                        that.alert.content = "登录成功";
+                    that.showAlert = true;
+                    that.alert.content = data.body.message
+                    if(data.body.state == 1){
                         that.alert.title = "赶紧去选购吧"
-                        cookie.set('username', that.userLogin.name);
+                        that.setCookie("username",that.userLogin.name,5)
                         setTimeout(function(){
                             that.$router.push({ path: '/home'})
                         },1000)

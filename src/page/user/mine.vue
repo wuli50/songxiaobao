@@ -6,10 +6,13 @@
               <img src="../../assets/img/mine/头像 (1).png" alt="">
               <div class="header-main right">
                   <div class="left">
-                      <h2>
+                      <h2 v-if="user_name == ''">
                           <router-link to = "/login">登录</router-link>
                           /
                           <router-link to = "/login">注册</router-link>
+                      </h2>
+                      <h2 v-else>
+                          <span>{{user_name}}</span>
                       </h2>
                       <p class="pho">
                           <img src="../../assets/img/mine/手机.png" alt="">
@@ -65,8 +68,16 @@ import bus from '../../bus.js'
 import backHeader from "../../components/backHeader"
 export default {
   name:"mine",
+  data(){
+      return {
+          user_name:this.getCookie('username')
+      }
+  },
   components:{
       backHeader,
+  },
+  methods:{
+    // 获取用户地址信息
   },
   created(){
       bus.$emit('show-bar',true)

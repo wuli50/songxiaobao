@@ -258,8 +258,8 @@ export default {
   // 方法
   methods: {
     back() {
-      // this.$router.back();
-      location.href = "/";
+      this.$router.back();
+      // location.href = "/";
     },
     // 获取店家信息
     getStore() {
