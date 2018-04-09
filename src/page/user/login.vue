@@ -112,11 +112,8 @@ export default {
         // 注册
         submitJoin(){
             var that = this;
-            var formData = JSON.stringify(this.userJoin);
-            console.log(formData)
-            this.$http.post('http://127.0.0.1:5000/user/join',{
-                data:formData
-            }).then(data=>{
+            that.$http.post('api/user-msg/add',that.userJoin,{emulateJSON: true})
+            .then(data=>{
                 console.log(data)
                 if(data.body.state == 0){
                     that.showAlert = true;

@@ -359,13 +359,15 @@ export default {
       ordermsg.price = this.orderList[i].price;
       orderList.push(ordermsg);
     }
+    // 传参
     var data = {}
-    data.storeName = this.Store.name;
-    data.orderMsg = orderList;
-    data.storeId=this.Store.id;
-    data.storeImage=this.Store.image_path;
-    data.allprice=this.allprice;
-    data.allNum = this.allNum
+    data.store_name = this.Store.name;
+    data.store_distribution =this.Store.distribution
+    data.order_list = orderList;
+    data.store_id=this.Store._id;
+    data.store_image=this.Store.image_path;
+    data.all_food_price=this.allprice;
+    data.all_food_num = this.allNum
     console.log(data)
     bus.$emit("orderMessage",data)
   }

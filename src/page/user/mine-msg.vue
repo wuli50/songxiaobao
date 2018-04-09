@@ -16,8 +16,7 @@
             </template>
         </group>
         <group>
-            <cell
-            title="修改密码"
+            <cell title="修改密码"
             :is-link="true"
             :border-intent="false"
             :arrow-direction="showUserPaw ? 'up' : 'down'"

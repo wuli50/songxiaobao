@@ -43,7 +43,8 @@ const routes = [
     component:Order
   },
   {
-    path:"/order/oreder-msg",
+    path:"/order/oreder-msg/:id",
+    name:"oreder-msg",
     component:OrderMsg
   },
   {

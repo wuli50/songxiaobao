@@ -5,10 +5,10 @@
     <card class="ads-card"
      :header="{title: '我的收货地址' }">
       <div slot="content" class="card-content">
-        {{address.message}}
+        {{address.ads + address.msg}}
         <div class="ads-box">
-          <span>{{address.order_name}}</span>
-          <span>{{address.order_pho}}</span>
+          <span>{{address.name}}</span>
+          <span>{{address.phone}}</span>
         </div>
       </div>
       
@@ -19,11 +19,11 @@
     <!-- 地址切换详情 -->
     <popup v-model="showMoreAds" position="bottom" max-height="50%">
       <group class="ads-list">
-        <cell v-for="ads in adsList">
-          <div class="ads-message">
-            <p class="adsmsg">{{ads.adsmsg}}</p>
-            <p>{{ads.orderName}}</p>
-            <p>{{ads.orderPho}}</p>
+        <cell v-for = "(ads, index)  in adsList">
+          <div class="ads-message" @click="seleAds(index,$event)">
+            <p class="adsmsg">{{ads.ads + ads.msg}}</p>
+            <p>{{ads.name}}</p>
+            <p>{{ads.phone}}</p>
           </div>
         </cell>
       </group>
@@ -42,40 +42,44 @@
           <p slot="popup-header" class="buy-title">请选择支付方式</p>
         </popup-radio>
     </group>
-    </div>
+  </div>
 
     <ul class="order-card">
-      <li class="order-card-title">{{order.storeName}}</li>
-      <li v-for="order in order.orderMsg">
+      <li class="order-card-title">{{order.store_name}}</li>
+      <li v-for = "order in order.order_list">
         <span class="food">{{order.name}}</span>
         <span>X{{order.num}}</span>
         <span class="foodprice">{{order.price}}</span>
       </li>
       <li class="order-card-title">
+        <span class="food">配送费</span>
+        <span></span>
+        <span class="foodprice">{{order.store_distribution}}</span>
+      </li>
+      <li class="order-card-title">
         <span class="food"></span>
-        <span>{{order.allNum}}</span>
-        <span class="foodprice">￥{{order.allprice.toFixed(2)}}</span>
+        <span>{{order.all_food_num}}</span>
+        <span class="foodprice">￥{{order.all_price}}</span>
       </li>
     </ul>
   </div>
 
   <div class="footer">
-    <div class="allprice">￥{{order.allprice.toFixed(2)}}</div>
+    <div class="allprice">￥{{order.all_price.toFixed(2)}}</div>
     <div class="buyfood">
         <p @click="buyConfirm = !buyConfirm">确认支付</p>
     </div>
   </div>
-
-  <div v-transfer-dom>
-    <!--on-cancel	 	点击取消按钮时触发	
+  <!--on-cancel	 	点击取消按钮时触发	
         on-confirm	(value)	点击确定按钮时触发, 参数为prompt中输入的值	
         on-show	 	弹窗出现时触发	
         on-hide	 	弹窗隐藏时触发 -->
+  <div v-transfer-dom>
     <confirm v-model="buyConfirm"
     :title="确认付款"
     @on-cancel="callOredrConfirm = !callOredrConfirm"
     @on-confirm="affOrder">
-      <p style="text-align:center;">你将支付{{order.allprice.toFixed(2)}},确认付款么？</p>
+      <p style="text-align:center;">你将支付{{order.all_price.toFixed(2)}},确认付款么？</p>
     </confirm>
     <confirm v-model="callOredrConfirm"
     :title="取消订单"
@@ -85,6 +89,7 @@
     <toast v-model="showcelltoast" type="text" :time="800" is-show-mask="true"  :position="middle">正在跳转...</toast>
     <toast v-model="showAfftoast" type="text" :time="800" is-show-mask="true"  :position="middle" @on-hide="toOrderMsg">正在支付中...</toast>
     <toast v-model="showtoast" type="text" :time="800" is-show-mask="true"  :position="middle">支付完成</toast>
+  <alert v-model="showAlert" :title="alert.title" is-link>{{alert.content}}</alert>
   </div>
 </div>
 
@@ -93,26 +98,20 @@
 <script>
 import bus from "../../bus.js";
 import backHeader from "../../components/backHeader"
-import {Card,Popup,Group,PopupRadio,Confirm,Toast} from "vux"
+import {Card,Popup,Group,PopupRadio,Confirm,Toast,Alert} from "vux"
 export default {
   name:"store-order",
   data(){
       return {
+        name:this.getCookie('username'),
         address:{
-          message:'地址详情',
-          order_name:"小宝",
-          order_pho:12345678945
+          msg:'',
+          ads:'',
+          phone:'',
+          name:''
         },
         showMoreAds:false,
-        adsList:[{
-          adsmsg:"地址详情1",
-          orderName:"收货人姓名",
-          orderPho:"收货人电话"
-        },{
-          adsmsg:"地址详情2",
-          orderName:"收货人姓名",
-          orderPho:"收货人电话"
-        }],
+        adsList:[],
         // 订单信息
         order:{},
         // 支付方式
@@ -125,51 +124,100 @@ export default {
         showcelltoast:false,
         showAfftoast:false,
         showtoast:false,
-        callOredrConfirm:false
+        callOredrConfirm:false,
+        // alter
+        showAlert:false,
+        alert:{
+            title:"操作",
+            content:""
+        },
+        order_id:''
       }
   },
     // 注册组件
   components:{
     backHeader,
-    Card,Popup,Group,PopupRadio,Confirm,Toast
+    Card,Popup,Group,PopupRadio,Confirm,Toast,Alert
   },
   methods:{
+     // 获取地址列表
+    getAdsList(){
+      var that = this;
+      that.$http.post('/api/user-msg/find',{name:that.name},{emulateJSON: true})
+      .then((data)=>{
+        // console.log(data.body.data[0].addreses)
+        that.adsList = data.body.data[0].addreses
+        that.address = data.body.data[0].addreses[0]
+      })
+    },
+    // 选择地址
+    seleAds(i,e){
+      this.address = this.adsList[i]
+    },
+
     // 取消订单
     onconfirm(){
       var that = this;
       this.showtoast = !this.showtoast;
       setTimeout(() => {
-        that.$router.push({ path: '/home/store/'+ that.order.storeId})
+        that.$router.push({ path: '/home/store/'+ that.order.store_id})
       }, 1000);
     },
-    // 确认订单
+
+    // 确认支付【展示支付toast】
     affOrder(){
       var that = this;
       this.showAfftoast = !this.showAfftoast;
-      setTimeout(() => {
-        this.showtoast = !this.showtoast;
-      }, 1000);
+      // 存储订单数据
+      //将订单信息存入数据库，跳转订单详情 
+      this.order.option_way = this.option;
+      this.order.adress = this.address;
+      this.order.is_option = true;
+      this.order.is_cell = false;
+      this.order.is_end = false;
+      var time = new Date()
+      this.order.order_time = time.toLocaleString();
+      var order_msg = this.order;
+      that.$http.post('api/order-msg/add',{
+        find:{name:that.getCookie('username')},
+        message:order_msg
+      },{emulateJSON: true})
+      .then(data=>{
+          console.log(data)
+          if(data.body.state == 0){
+          }else{
+               setTimeout(() => {
+                 that.order_id = data.body.data._id;
+                  that.showtoast = !that.showtoast;
+                }, 1000);
+              
+          }
+      })
     },
+
     //支付
     toOrderMsg(){
-      //将订单信息存入数据库，跳转订单详情 
       setTimeout(() => {
-        this.$router.push({ path: '/order-msg'})
+        this.$router.push({
+          name: 'oreder-msg',
+          params: {
+            id: this.order_id
+          }
+        })
       }, 1000);
     }
   },
   created(){
+    this.getAdsList()
     bus.$on("orderMessage",message =>{
       this.order = message;
+      this.order.all_price = parseFloat(this.order.all_food_price) + parseFloat(this.order.store_distribution)
+      this.order.is_option = false;
+      this.order.user_name = this.name
     })
   },
   beforeDestroy () {
     bus.$off("orderMessage",this.order);
-    this.order.option_way = this.option;
-    this.order.order_ads = this.address;
-    this.order.is_option = true;
-    this.order.order_time = new Date();
-    bus.$emit('orderMessage',this.order)
   }
 }
 </script>

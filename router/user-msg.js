@@ -17,7 +17,28 @@ var UserMsg = Song.UserMsg;
 var router = express.Router();
 // 增加用户[注册用户]
 router.post('/add',(req,res)=>{
-    console.log(req.body)
+    UserMsg.find({name:req.body.name},(err,data)=>{
+        if(data.length != 0){
+          res.json({
+            state:0,
+            message:"此用户名存在,换一个吧"
+          })
+        }else{
+          var usermsg = new UserMsg({
+            name:req.body.name,
+            paw:req.body.password1,
+            phone:req.body.phone
+          })
+          usermsg.save(function (error, data, status){
+            if(!error){
+              res.json({
+                state:1,
+                message:"注册成功"
+              })
+            }
+          })
+        }
+      })
 })
 // 查询
 router.post('/find', (req, res) => {

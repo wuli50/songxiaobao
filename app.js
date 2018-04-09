@@ -32,6 +32,8 @@ app.use('/api/user-msg',require("./router/user-msg.js"))
 app.use('/api/store-msg',require("./router/store-msg.js"));
 // 引入食物路由
 app.use('/api/store-food',require("./router/store-food.js"));
+// 引入订单路由
+app.use('/api/order-msg',require("./router/order-msg.js"));
 
 // 用户登录
 app.post('/api/user/login', (req, res) => {
