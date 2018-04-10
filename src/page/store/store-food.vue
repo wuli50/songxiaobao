@@ -4,17 +4,6 @@
             <el-button class="add-food-btn" type="info" plain icon="el-icon-edit" @click="addFoodClassShow=true">添加分类</el-button>
         </div>
         <div>
-            <!--工具条-->
-            <el-col :span="24" class="toolbar" style="padding-bottom: 0px;">
-                <el-form :inline="true" :model="filters">
-                    <el-form-item>
-                        <el-input v-model="filters.name" placeholder="请输入姓名"></el-input>
-                    </el-form-item>
-                    <el-form-item>
-                        <el-button type="primary">查询</el-button>
-                    </el-form-item>
-                </el-form>
-            </el-col>
             <!-- 食品列表 -->
             <el-table :data="foodsList" style="width: 100%" height="600"  @selection-change="selsChange">
                 <el-table-column  type="selection" width="55">

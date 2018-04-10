@@ -174,9 +174,10 @@
             <div class="payment">
                 <span v-if="allprice == 0">购物车空空~</span>
                 <span v-else  @click="goStoreOrder">
-                   <router-link :to='{path:"/store-order"}'>
+                   <div class="go-buy">
                   去结算
-                   </router-link></span>
+                   </div>
+                </span>
             </div>
             <div class="orderlist" v-if="orderShow && allprice > 0">
                 <ul>
@@ -331,6 +332,13 @@ export default {
     },
     // 跳转订单页面
     goStoreOrder(){
+      console.log('123')
+      if(this.getCookie('username')){
+        this.$router.push({path:'/store-order'})
+      }else{
+        alert('你还没有登录哦，先去登录吧')
+        this.$router.push({path:'/login'})
+      }
     }
   },
   watch() {},
@@ -773,6 +781,10 @@ div.money input {
     width: 5vw;
     border: none;
     text-align: center;
+}
+.go-buy{
+  font-size: 4vw;
+  font-weight: 600;
 }
 </style>
 

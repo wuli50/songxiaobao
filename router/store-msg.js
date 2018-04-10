@@ -19,7 +19,7 @@ var router = express.Router();
 // 创建接口
 router.post('/find', (req, res) => {
     // 根据接口参数获取查询条件
-    // console.log(req.body)
+    console.log(req.body)
     StoreMsg.find(req.body,(err,data)=>{
         if(err){
             res.json({
@@ -34,6 +34,31 @@ router.post('/find', (req, res) => {
             })
         }
     })
+})
+router.post('/findname', (req, res) => {
+  // 根据接口参数获取查询条件
+  console.log(req.body)
+  if(req.body.name){
+      var qs = new RegExp(req.body.name)
+      req.body.name = qs;
+  }else{
+    delete req.body['name'];
+  }
+  StoreMsg.find(req.body,(err,data)=>{
+    if(err){
+        res.json({
+            message:"数据读取失败",
+            state:0
+        })
+    }else{
+        res.json({
+            data:data,
+            state:1,
+            message:"数据读取成功"
+        })
+    }
+  })
+  
 })
 // 添加店铺【注册店铺】
 router.post('/add',(req,res)=>{
@@ -116,14 +141,13 @@ router.post('/update', (req, res) => {
       var newfilename = fields.name + id + '.jpg';
       var newpath = uploadDir + '/store' + newfilename;
       var storemsg = {
-        id:store.id,
         name: store.name,
         address: store.address,
         phone: store.phone,
         promotion_info: store.promotion_info,
         distribution: store.distribution,
         type: store.type,
-        is_aduit_msg: store.is_aduit_msg,
+        is_aduit_msg: false,
         is_submit_msg:true,
         is_submit_food:false,
         is_aduit_food:false
@@ -136,10 +160,12 @@ router.post('/update', (req, res) => {
           })
         } else {
           storemsg.image_path = newpath;
+          console.log(storemsg)
           //update对数据进行修改
           // 参数一，需要修改的数据的查询条件；参数二：修改的内容；参数三：修改结果
           StoreMsg.update({name:storemsg.name},storemsg,(err)=>{
               if(err){
+                console.log(err);
                 res.json({
                     state:0,
                     message:"数据修改失败"

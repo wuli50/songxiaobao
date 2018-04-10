@@ -33,8 +33,27 @@
         </ul>
     </div>
     <div class="order-footer box">
-        
+        <ul class="order-card">
+            <li class="order-card-title"><b class="title">配送信息</b></li>
+            <li class="order-footer-title">
+                <span>商家地址</span>
+                <span>{{storeMsg.address}}</span>
+            </li>
+            <li class="order-footer-title">
+                <span>联系方式</span>
+                <span>{{storeMsg.phone}}</span>
+            </li>
+            <li class="order-footer-title">
+                <span>订单时间</span>
+                <span>{{order.order_time}}</span>
+            </li>
+            <li class="order-footer-title">
+                <span>支付方式</span>
+                <span>{{order.is_option?order.option_way:'未支付'}}</span>
+            </li>
+        </ul>
     </div>
+    <router-link class="footer"  :to="{path: '/home'}">回到首页</router-link>
 </div>
   
 </template>
@@ -49,7 +68,8 @@ export default {
   },
   data(){
       return{
-          order:{}
+          order:{},
+          storeMsg:{}
       }
   },
   methods:{
@@ -61,15 +81,29 @@ export default {
             if (data.body.state == 0) {
             } else{
                 that.order = data.body.data[0];
+                that.getStoreMsg({_id: that.order.store_id})
             }
         })
+    },
+    getStoreMsg(obj){
+        var that = this;
+      that.$http.post('api/store-msg/find',obj,{emulateJSON: true})
+      .then((data)=>{
+          console.log(data);
+          if (data.body.state == 0) {
+          } else{
+            that.storeMsg = data.body.data[0];
+            that.storeMsg.image_path = '../../.'+data.body.data[0].image_path;
+          }
+      })
     }
 
   },
   created(){
     var that = this;
     bus.$emit("show-bar", false);
-    that.getOrderMsg({_id: that.$route.params.id})
+    that.getOrderMsg({_id: that.$route.params._id})
+    
   },
    beforeDestroy () {
    }
@@ -99,7 +133,7 @@ export default {
     .order-card-title{
         display: flex;
         justify-content: space-between;
-        padding: 4xw;
+        padding: 1vw 2vw;
         .food{
             flex-grow: 1;
         }
@@ -112,6 +146,22 @@ export default {
     .li-top{
         font-weight: 600;
     }
+}
+.order-footer-title{
+    display: flex;
+    justify-content: space-between;
+    padding: 1vw 2vw;
+}
+.footer{
+    text-align: center;
+    position: fixed;
+    border-radius: 5px;
+    width: 100%;
+    padding: 2vw;
+    bottom: 0;
+    border: 1px solid #555;
+    color: #555;
+    background-color: #fff;
 }
 </style>
 

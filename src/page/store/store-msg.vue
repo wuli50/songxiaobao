@@ -13,16 +13,9 @@
       <el-form-item label="配送费" prop="distribution">
 				<el-input-number v-model="storeMsg.distribution" :step="0.5" :min="0"></el-input-number>
 			</el-form-item>
-			<el-form-item label="店铺性质" prop="type">
+			<el-form-item label="店铺性质">
 				<el-checkbox-group v-model="storeMsg.type">
-				<el-checkbox label="同事一波" name="type"></el-checkbox>
-				<el-checkbox label="一人狂欢" name="type"></el-checkbox>
-				<el-checkbox label="宿舍小聚" name="type"></el-checkbox>
-				<el-checkbox label="俩人优选" name="type"></el-checkbox>
-				<el-checkbox label="美食" name="type"></el-checkbox>
-				<el-checkbox label="午餐" name="type"></el-checkbox>
-				<el-checkbox label="甜品" name="type"></el-checkbox>
-				<el-checkbox label="粉面" name="type"></el-checkbox>
+          <el-checkbox v-for="type in types" :label="type" :key="type">{{type}}</el-checkbox>
 				</el-checkbox-group>
 			</el-form-item>
 			<el-form-item label="店铺照片" prop="image_path">
@@ -44,6 +37,7 @@
 </template>
 
 <script>
+const typeOptions = ['同事一波', '一人狂欢', '宿舍小聚', '俩人优选','美食','午餐','甜品一','粉面'];
 export default {
   data() {
     return {
@@ -60,6 +54,7 @@ export default {
         is_aduit_food:false,
        	image_path: ""
       },
+      types:typeOptions,
       rules: {
         name: [
           { required: true, message: "请输入店铺名称", trigger: "blur" },
@@ -73,7 +68,6 @@ export default {
         ],
         type: [
           {
-            type: "array",
             required: true,
             message: "请至少选择一个店铺性质",
             trigger: "change"
@@ -145,6 +139,7 @@ export default {
   mounted() {},
   created(){
     this.getStore()
+    
   }
 };
 </script>

@@ -77,18 +77,14 @@
   <div v-transfer-dom>
     <confirm v-model="buyConfirm"
     :title="确认付款"
-    @on-cancel="callOredrConfirm = !callOredrConfirm"
+    @on-cancel="cellOption"
     @on-confirm="affOrder">
-      <p style="text-align:center;">你将支付{{order.all_price.toFixed(2)}},确认付款么？</p>
+      <p style="text-align:center;">你将支付{{order.all_price.toFixed(2)}},付款么？</p>
     </confirm>
-    <confirm v-model="callOredrConfirm"
-    :title="取消订单"
-    @on-confirm="onconfirm">
-      <p style="text-align:center;">您将取消订单，确定么？？？？</p>
-    </confirm>
-    <toast v-model="showcelltoast" type="text" :time="800" is-show-mask="true"  :position="middle">正在跳转...</toast>
-    <toast v-model="showAfftoast" type="text" :time="800" is-show-mask="true"  :position="middle" @on-hide="toOrderMsg">正在支付中...</toast>
-    <toast v-model="showtoast" type="text" :time="800" is-show-mask="true"  :position="middle">支付完成</toast>
+    <toast v-model="shownocelltoast" type="text" :time="800" is-show-mask  :position="middle">正在取消支付...</toast>
+    <toast v-model="showcelltoast" type="text" :time="800" is-show-mask  :position="middle">正在跳转...</toast>
+    <toast v-model="showAfftoast" type="text" :time="800" is-show-mask :position="middle">正在支付中...</toast>
+    <toast v-model="showtoast" type="text" :time="800" is-show-mask  :position="middle" @on-hide="toOrderMsg">支付完成</toast>
   <alert v-model="showAlert" :title="alert.title" is-link>{{alert.content}}</alert>
   </div>
 </div>
@@ -154,14 +150,34 @@ export default {
     seleAds(i,e){
       this.address = this.adsList[i]
     },
-
-    // 取消订单
-    onconfirm(){
+    // 取消支付的未支付订单
+    cellOption(){
       var that = this;
-      this.showtoast = !this.showtoast;
-      setTimeout(() => {
-        that.$router.push({ path: '/home/store/'+ that.order.store_id})
-      }, 1000);
+      this.shownocelltoast = !this.shownocelltoast;
+      // 存储订单数据
+      //将订单信息存入数据库，跳转订单详情 
+      this.order.option_way = this.option;
+      this.order.adress = this.address;
+      this.order.is_option = false;
+      this.order.is_cell = false;
+      this.order.is_end = false;
+      var time = new Date()
+      this.order.order_time = time.toLocaleString();
+      var order_msg = this.order;
+      that.$http.post('api/order-msg/add',{
+        find:{name:that.getCookie('username')},
+        message:order_msg
+      },{emulateJSON: true})
+      .then((data)=>{
+        if(data.body.state == 0){
+          }else{
+               setTimeout(() => {
+                  that.$router.push({
+                     path: '/home/store/'+ that.order.store_id,
+                  })
+                }, 1000);
+          }
+      })
     },
 
     // 确认支付【展示支付toast】
@@ -182,14 +198,15 @@ export default {
         find:{name:that.getCookie('username')},
         message:order_msg
       },{emulateJSON: true})
-      .then(data=>{
+      .then((data)=>{
           console.log(data)
           if(data.body.state == 0){
           }else{
-               setTimeout(() => {
-                 that.order_id = data.body.data._id;
-                  that.showtoast = !that.showtoast;
-                }, 1000);
+            console.log(data.body.data)
+            that.order_id = data.body.data._id;
+            setTimeout(() => {
+              that.showtoast = !that.showtoast;
+            }, 1000);
               
           }
       })
@@ -198,12 +215,11 @@ export default {
     //支付
     toOrderMsg(){
       setTimeout(() => {
-        this.$router.push({
-          name: 'oreder-msg',
-          params: {
-            id: this.order_id
-          }
-        })
+        var that = this;
+        console.log(that.order_id)
+        that.$router.push({
+            path: '/order/oreder-msg/'+ that.order_id,
+          })
       }, 1000);
     }
   },

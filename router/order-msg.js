@@ -19,9 +19,11 @@ var router = express.Router();
 
 // 添加订单
 router.post('/add',(req,res)=>{
+    console.log(req.body.find)
     UserMsg.find(req.body.find,(err,userdata)=> {
         var ordermsg = new OrderMsg(req.body.message)
-        ordermsg.user_id = userdata[0]._id
+        ordermsg.user_id = userdata[0]._id;
+        console.log(ordermsg)
         ordermsg.save((err,data,status)=>{
             if(!err){
                 res.json({
@@ -57,7 +59,24 @@ router.post('/find', (req, res) => {
             })
         }
     })
-  })
+})
+
+// 修改数据
+router.post('/update',(req,res)=>{
+    OrderMsg.update(req.body.tip,req.body.message,(err)=>{
+        if(err){
+          res.json({
+              state:0,
+              message:"数据修改失败"
+          })
+        }else{
+          res.json({
+              state:1,
+              message:"数据修改成功"
+          })
+        }
+      })
+})
 
 // 导出路由
 module.exports = router;

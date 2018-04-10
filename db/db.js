@@ -19,14 +19,13 @@ db.on('error',function(){
 var Schema = mongoose.Schema;
 // 创建 store-msg 表结构
 var storeMsgSchema = new Schema({
-    id:Number,
     name: String,
     paw:String,
     address: String,
     phone: String,
     promotion_info: String,
     distribution: Number,
-    type: Array,
+    type:Array,
     is_aduit_msg: Boolean,
     is_submit_msg:Boolean,
     is_submit_food:Boolean,
@@ -77,6 +76,7 @@ var orderMsgSchema = new Schema({
     store_name:Number,
     // 用户
     user_id:String,
+    user_name:String,
     // 订单地址信息
     addreses:{
         msg:String,

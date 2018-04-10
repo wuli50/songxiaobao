@@ -18,6 +18,7 @@ import ShopAds from '../page/user/shop-ads.vue'
 import AddAds from "../page/user/add-ads.vue"
 import MineMsg from "../page/user/mine-msg.vue"
 import OrderMsg from '../page/user/order-msg.vue'
+import StoreClass from '../page/user/store-class.vue'
 
 import AdminLogin from "../page/admin/login.vue"
 import AdminHome from "../page/admin/home.vue"
@@ -43,14 +44,19 @@ const routes = [
     component:Order
   },
   {
-    path:"/order/oreder-msg/:id",
-    name:"oreder-msg",
+    path:"/order/oreder-msg/:_id",
+    name:"oredermsg",
     component:OrderMsg
   },
   {
-    path:"/home/store/:id",
+    path:"/home/store/:_id",
     name:"store",
     component:Store
+  },
+  {
+    path:"/home/store-class/:type",
+    name:"storeclass",
+    component:StoreClass
   },
   {
     path:"/findstore",

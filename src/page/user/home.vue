@@ -40,10 +40,10 @@
             class="classfood">
                 <swiper-item>
                     <div class="sort-box">
-                        <a href="">
+                        <router-link :to='{name:"storeclass",params:{type:"美食"}}'>
                             <img src="http://fuss10.elemecdn.com/b/7e/d1890cf73ae6f2adb97caa39de7fcjpeg.jpeg?imageMogr/thumbnail/!90x90r/gravity/Center/crop/90x90/" alt="">
                             <p>美食</p>
-                        </a>
+                        </router-link>
                         <a href="">
                             <img src="//fuss10.elemecdn.com/d/38/7bddb07503aea4b711236348e2632jpeg.jpeg?imageMogr/thumbnail/!90x90r/gravity/Center/crop/90x90/" alt="">
                             <p>午餐</p></a>
@@ -168,6 +168,12 @@ export default {
   name:"home",
   data(){
       return {
+          typeList:[
+              {
+                  name:'',
+                  image_path:''
+              }
+          ],
           address:"福州市",
           weather:{},
           storeList:[],
