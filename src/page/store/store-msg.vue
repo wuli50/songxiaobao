@@ -13,9 +13,10 @@
       <el-form-item label="配送费" prop="distribution">
 				<el-input-number v-model="storeMsg.distribution" :step="0.5" :min="0"></el-input-number>
 			</el-form-item>
+      <!-- 多选 -->
 			<el-form-item label="店铺性质">
-				<el-checkbox-group v-model="storeMsg.type">
-          <el-checkbox v-for="type in types" :label="type" :key="type">{{type}}</el-checkbox>
+				<el-checkbox-group v-model="storeMsg.type" @change="CheckedTypeChange">
+            <el-checkbox v-for="type in types" :label="type" :key="type" >{{type}}</el-checkbox>
 				</el-checkbox-group>
 			</el-form-item>
 			<el-form-item label="店铺照片" prop="image_path">
@@ -37,7 +38,6 @@
 </template>
 
 <script>
-const typeOptions = ['同事一波', '一人狂欢', '宿舍小聚', '俩人优选','美食','午餐','甜品一','粉面'];
 export default {
   data() {
     return {
@@ -54,7 +54,7 @@ export default {
         is_aduit_food:false,
        	image_path: ""
       },
-      types:typeOptions,
+      types:['同事一波', '一人狂欢', '宿舍小聚', '俩人优选','美食','午餐','甜品','粉面'],
       rules: {
         name: [
           { required: true, message: "请输入店铺名称", trigger: "blur" },
@@ -80,6 +80,7 @@ export default {
     };
   },
   methods: {
+    // 获取商店数据
     getStore(){
       var that = this;
       // console.log(that.getCookie('storename'))
@@ -99,7 +100,10 @@ export default {
           }
       })
     },
-    
+    // 改变type
+    CheckedTypeChange(){
+      console.log(this.storeMsg.type)
+    },
     submitForm() {
       var that = this;
       var formdata = new FormData();

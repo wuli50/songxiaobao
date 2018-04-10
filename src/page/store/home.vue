@@ -36,6 +36,9 @@
 					<el-menu-item index="1">
 						<router-link to = "/store/store-food"><i class="el-icon-message"></i>店铺食物管理</router-link>
 					</el-menu-item>
+					<el-menu-item index="2">
+						<router-link to = "/store/store-order"><i class="el-icon-message"></i>店铺订单管理</router-link>
+					</el-menu-item>
 					
                 </el-menu>
 			</aside>

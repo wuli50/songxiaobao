@@ -148,8 +148,13 @@ export default {
     color: #999999;
     font-size: 3vw;
 }
+.order-header{
+    display: flex;
+    justify-content: space-between;
+}
 .order-header .right{
     width: calc(100% - 15vw);
+    margin-left: 5vw;
 }
 .order-title{
     display: flex;
@@ -166,7 +171,7 @@ export default {
     justify-content: space-between;
     text-align: center;
     color:#999;
-    margin-left: 10vw;
+    margin-left: 20vw;
     margin-bottom: 5vw;
 }
 .order-foot{

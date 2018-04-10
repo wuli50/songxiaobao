@@ -40,6 +40,7 @@
             <el-table-column label="操作" width="300" >
                 <template slot-scope="scope">
                     <el-button type="primary" size="small" @click="showUserEdit(scope.row)">编辑</el-button>
+                    <el-button type="primary" plain size="small" @click="findOrder(scope.$index, scope.row)">查看订单</el-button>
                     <el-button type="danger" size="small" @click="removeUSer(scope.row)">删除</el-button>
                 </template>
             </el-table-column>
@@ -170,6 +171,15 @@ export default {
             }
         })
     },
+    // 查看订单
+    findOrder(index, row){
+        this.$router.push({ 
+            path: '/admin/user-order',
+            query: {
+                _id: row._id
+            }
+        })
+    }
   },
   mounted() {
     var that = this;

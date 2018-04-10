@@ -161,6 +161,8 @@ export default {
       this.order.is_option = false;
       this.order.is_cell = false;
       this.order.is_end = false;
+      this.order.user_name = that.getCookie('username')
+      this.order.address = this.address;
       var time = new Date()
       this.order.order_time = time.toLocaleString();
       var order_msg = this.order;
@@ -191,6 +193,8 @@ export default {
       this.order.is_option = true;
       this.order.is_cell = false;
       this.order.is_end = false;
+      this.order.address = this.address;
+      this.order.user_name = that.getCookie('username')
       var time = new Date()
       this.order.order_time = time.toLocaleString();
       var order_msg = this.order;

@@ -60,7 +60,6 @@ router.post('/find', (req, res) => {
         }
     })
 })
-
 // 修改数据
 router.post('/update',(req,res)=>{
     OrderMsg.update(req.body.tip,req.body.message,(err)=>{
@@ -77,6 +76,23 @@ router.post('/update',(req,res)=>{
         }
       })
 })
+// 删除
+router.post('/remove',(req,res)=>{
+    OrderMsg.remove(req.body,(err)=>{
+      if(err){
+        res.json({
+            state:0,
+            message:"数据删除失败"
+        })
+      }else{
+        res.json({
+            state:1,
+            message:"数据删除成功"
+        })
+      }
+    })
+})
+
 
 // 导出路由
 module.exports = router;

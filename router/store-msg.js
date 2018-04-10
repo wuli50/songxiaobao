@@ -37,7 +37,7 @@ router.post('/find', (req, res) => {
 })
 router.post('/findname', (req, res) => {
   // 根据接口参数获取查询条件
-  console.log(req.body)
+  // console.log(req.body)
   if(req.body.name){
       var qs = new RegExp(req.body.name)
       req.body.name = qs;
@@ -146,7 +146,7 @@ router.post('/update', (req, res) => {
         phone: store.phone,
         promotion_info: store.promotion_info,
         distribution: store.distribution,
-        type: store.type,
+        type: store.type.split(','),
         is_aduit_msg: false,
         is_submit_msg:true,
         is_submit_food:false,

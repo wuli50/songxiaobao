@@ -3,10 +3,6 @@
 		<!--工具条-->
 		<el-col :span="24" class="toolbar" style="padding-bottom: 0px;">
 			<el-form :inline="true" :model="filters">
-				<el-form-item class="find">
-					<el-input v-model="filters.store_name" placeholder="店名"></el-input>
-                    <el-button type="primary" @click="getOrderList({store_name:filters.store_name})">查询</el-button>
-				</el-form-item>
 				<el-form-item>
 					<el-input v-model="filters.user_name" placeholder="用户名"></el-input>
                     <el-button type="primary" @click="getOrderList({store_name:filters.store_name})">查询</el-button>
@@ -14,7 +10,7 @@
                 <el-form-item>
                     <el-button type="primary" @click="getOrderList({is_end:false})" plain>点击查询未完成订单</el-button>
 				</el-form-item>
-                <el-button type="primary" @click="getOrderList()">显示所有</el-button>
+                <el-button type="primary" @click="getOrderList({})">显示所有</el-button>
 			</el-form>
 		</el-col>
 
@@ -35,11 +31,16 @@
                         </el-table>
                     </template>
                 </el-table-column>
-			<el-table-column prop="store_name" label="店名" width="120"></el-table-column>
+			<el-table-column prop="user_name" label="用户名" width="120"></el-table-column>
 			
 			<el-table-column prop="is_end" label="订单完成状态" width="120">
 				<template slot-scope="scope">
-					<el-button :type="scope.row.is_end ? 'success':'primary' " @click="endOrder('is_end',scope.row)">{{scope.row.is_end ?'已完成':'未完成'}}</el-button>
+					<el-button :type="scope.row.is_end ? 'success':'primary' " @click="changeOrder('is_end',scope.row)">{{scope.row.is_end ?'已完成':'未完成'}}</el-button>
+				</template>
+			</el-table-column>
+			<el-table-column prop="is_cell" label="订单是否取消" width="120">
+				<template slot-scope="scope">
+					<el-button :type="scope.row.is_cell ? 'success':'primary' " @click="changeOrder('is_cell',scope.row)">{{scope.row.is_cell ?'已取消':'未取消'}}</el-button>
 				</template>
 			</el-table-column>
 			<el-table-column prop="option_way" label="支付方式" width="100" ></el-table-column>
@@ -74,6 +75,8 @@
 			getOrderList(obj){
 				// 参数查询条件
 				var that = this;
+				obj.store_name = that.getCookie('storename')
+				console.log(obj)
 				that.$http.post('api/order-msg/find',obj,{emulateJSON: true})
 				.then((data)=>{
 					if (data.body.state == 0) {
@@ -101,19 +104,20 @@
 							message: data.body.message,
 							type: 'success'
 						});
-						that.getOrderList();
+						that.getOrderList({});
 					}
 				})
 			},
-			// 完成订单
-			endOrder(type,row){
+			// 改变订单
+			changeOrder(type,row){
 				var that = this;
 				// 查询条件
 				var find = {
 					_id:row._id
 				}
 				// 修改条件
-				var editmsg = {is_end:true}
+				var editmsg = {}
+				editmsg[type] = true
 				that.$http.post('api/order-msg/update',{
 					tip:find,   
 					message:editmsg
@@ -128,20 +132,15 @@
 							type: 'success'
 						});
 						that.orderList = data.body.data;
-						that.getOrderList();
+						that.getOrderList({});
 					}
 					
 				})
-
-			},
+			}
 			
 		},
 		mounted() {
-			if(this.$route.query._id){
-                this.getOrderList({user_id:this.$route.query._id});
-            }else{
-                this.getOrderList();
-            }
+            this.getOrderList({});
 		}
 	}
 

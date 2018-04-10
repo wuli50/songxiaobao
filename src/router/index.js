@@ -31,6 +31,7 @@ import StoreLogin from "../page/store/login.vue"
 import StoreHome from "../page/store/home.vue"
 import StoreMsg from '../page/store/store-msg.vue'
 import StoreFood from '../page/store/store-food.vue'
+import StoreOrder from '../page/store/store-order.vue'
 
 
 // 配置路由规则
@@ -99,6 +100,7 @@ const routes = [
     children: [
         { path: '/admin/store-msg', component: AdminStoreMsg, name: '店铺基本信息', hidden: true },
         { path: '/admin/store-food', component: AdminStoreFood, name: '店铺食物信息', hidden: true },
+        
         { path: '/admin/user-msg', component: AdminUserMsg, name: '用户基本信息', hidden: true },
         { path: '/admin/user-order', component: AdminUserOrder, name: '用户订单信息', hidden: true },
       ]
@@ -116,6 +118,7 @@ const routes = [
       children: [
         { path: '/store/store-msg', component: StoreMsg, name: '店铺信息详情', hidden: true },
           { path: '/store/store-food', component: StoreFood, name: '店铺菜品详情', hidden: true },
+          { path: '/store/store-order', component: StoreOrder, name: '店铺订单信息', hidden: true },
         ]
       },
 
