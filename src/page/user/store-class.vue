@@ -1,6 +1,6 @@
 <template>
   <div class="store-class">
-    <back-header>{{type}}</back-header>
+    <back-header>{{type[0]}}</back-header>
     <main>
       <!-- 店铺列表 -->
       <div class="store-list" v-if="storeList.length >0">
@@ -53,7 +53,7 @@ export default {
   name:"storeclass",
   data(){
       return {
-          type:this.$route.params.type,
+          type:[this.$route.params.type],
           storeList:[]
       }
   },
@@ -64,7 +64,15 @@ export default {
     //   获取商家
     getStoreList(obj){
         var that = this;
-        that.$http.post('api/store-msg/find',obj,{emulateJSON: true})
+        var object = {};
+        object.is_aduit_food = true;
+        object.is_aduit_msg = true;
+        object.type = {$in:that.type};
+        for(var key in obj){
+            object[key] = obj[key]
+        }
+        console.log(object)
+        that.$http.post('api/store-msg/find',object,{emulateJSON: true})
         .then((data)=>{
             that.storeList = data.body.data;
             for(var i=0; i<data.body.data.length;i++){
@@ -74,7 +82,9 @@ export default {
     },
   },
   created(){
-    this.getStoreList({is_aduit_food:true,is_aduit_msg:true})
+        console.log(this.type)
+        this.getStoreList({})
+    
   }
 }
 </script>
@@ -151,7 +161,7 @@ export default {
         color: #555;
     }
     .main2 div.right span{
-        background-color: #0091ff;
+        background-color: rgba(254, 90, 90, 0.8);
         color: white;
         padding: 0.2vw 0.5vw;
         border-radius: 1vw;

@@ -40,61 +40,15 @@
             class="classfood">
                 <swiper-item>
                     <div class="sort-box">
-                        <router-link :to='{name:"storeclass",params:{type:"美食"}}'>
-                            <img src="http://fuss10.elemecdn.com/b/7e/d1890cf73ae6f2adb97caa39de7fcjpeg.jpeg?imageMogr/thumbnail/!90x90r/gravity/Center/crop/90x90/" alt="">
-                            <p>美食</p>
-                        </router-link>
-                        <a href="">
-                            <img src="//fuss10.elemecdn.com/d/38/7bddb07503aea4b711236348e2632jpeg.jpeg?imageMogr/thumbnail/!90x90r/gravity/Center/crop/90x90/" alt="">
-                            <p>午餐</p></a>
-                        <a href="">
-                            <img src="//fuss10.elemecdn.com/c/3c/0184f5b3fa72f295fc01864734218jpeg.jpeg?imageMogr/thumbnail/!90x90r/gravity/Center/crop/90x90/" alt="">
-                            <p>超市便利</p></a>
-                        <a href="">
-                            <img src="//fuss10.elemecdn.com/c/db/d20d49e5029281b9b73db1c5ec6f9jpeg.jpeg?imageMogr/thumbnail/!90x90r/gravity/Center/crop/90x90/" alt="">
-                            <p>新鲜速递</p></a>
-                        <a href="">
-                            <img src="//fuss10.elemecdn.com/b/7f/432619fb21a40b05cd25d11eca02djpeg.jpeg?imageMogr/thumbnail/!90x90r/gravity/Center/crop/90x90/" alt="">
-                            <p>果蔬生鲜</p></a>
-                        <a href="">
-                            <img src="//fuss10.elemecdn.com/6/74/785eafaf358fa6b18df37c64c3510jpeg.jpeg?imageMogr/thumbnail/!90x90r/gravity/Center/crop/90x90/" alt="">
-                            <p>新店特惠</p></a>
-                        <a href="">
-                            <img src="//fuss10.elemecdn.com/2/35/696aa5cf9820adada9b11a3d14bf5jpeg.jpeg?imageMogr/thumbnail/!90x90r/gravity/Center/crop/90x90/" alt="">
-                            <p>米粉面馆</p></a>
-                        <a href="">
-                            <img src="//fuss10.elemecdn.com/2/35/696aa5cf9820adada9b11a3d14bf5jpeg.jpeg?imageMogr/thumbnail/!90x90r/gravity/Center/crop/90x90/" alt="">
-                            <p>甜品饮品</p></a>
+                        <div v-for="(type,index) in typeList" class="home-type">
+                            <router-link :to='{name:"storeclass",params:{type:type.name}}'>
+                                <img :src="type.image_path" alt="">
+                                <p>{{type.name}}</p>
+                            </router-link>
+                        </div>
                     </div>
                 </swiper-item>
                 <swiper-item>
-                    <div class="sort-box">
-                        <a href="">
-                            <img src="http://fuss10.elemecdn.com/b/7e/d1890cf73ae6f2adb97caa39de7fcjpeg.jpeg?imageMogr/thumbnail/!90x90r/gravity/Center/crop/90x90/" alt="">
-                            <p>美食</p>
-                        </a>
-                        <a href="">
-                            <img src="//fuss10.elemecdn.com/d/38/7bddb07503aea4b711236348e2632jpeg.jpeg?imageMogr/thumbnail/!90x90r/gravity/Center/crop/90x90/" alt="">
-                            <p>午餐</p></a>
-                        <a href="">
-                            <img src="//fuss10.elemecdn.com/c/3c/0184f5b3fa72f295fc01864734218jpeg.jpeg?imageMogr/thumbnail/!90x90r/gravity/Center/crop/90x90/" alt="">
-                            <p>超市便利</p></a>
-                        <a href="">
-                            <img src="//fuss10.elemecdn.com/c/db/d20d49e5029281b9b73db1c5ec6f9jpeg.jpeg?imageMogr/thumbnail/!90x90r/gravity/Center/crop/90x90/" alt="">
-                            <p>新鲜速递</p></a>
-                        <a href="">
-                            <img src="//fuss10.elemecdn.com/b/7f/432619fb21a40b05cd25d11eca02djpeg.jpeg?imageMogr/thumbnail/!90x90r/gravity/Center/crop/90x90/" alt="">
-                            <p>果蔬生鲜</p></a>
-                        <a href="">
-                            <img src="//fuss10.elemecdn.com/6/74/785eafaf358fa6b18df37c64c3510jpeg.jpeg?imageMogr/thumbnail/!90x90r/gravity/Center/crop/90x90/" alt="">
-                            <p>新店特惠</p></a>
-                        <a href="">
-                            <img src="//fuss10.elemecdn.com/2/35/696aa5cf9820adada9b11a3d14bf5jpeg.jpeg?imageMogr/thumbnail/!90x90r/gravity/Center/crop/90x90/" alt="">
-                            <p>米粉面馆</p></a>
-                        <a href="">
-                            <img src="//fuss10.elemecdn.com/2/35/696aa5cf9820adada9b11a3d14bf5jpeg.jpeg?imageMogr/thumbnail/!90x90r/gravity/Center/crop/90x90/" alt="">
-                            <p>甜品饮品</p></a>
-                    </div>
                 </swiper-item>    
         </swiper>
         <!-- 商家列表 -->
@@ -170,8 +124,31 @@ export default {
       return {
           typeList:[
               {
-                  name:'',
-                  image_path:''
+                  name:'同事一波',
+                  image_path:'../../../static/home-image/icon-tongshi.png'
+              },
+              {
+                  name:'一人狂欢',
+                  image_path:'../../../static/home-image/icon-yiren.png'
+              },
+              {
+                  name:'宿舍小聚',
+                  image_path:'../../../static/home-image/icon-sushe.png'
+              },{
+                  name:'超市便利',
+                  image_path:'../../../static/home-image/icon-chaoshi.png'
+              },{
+                  name:'美食',
+                  image_path:'../../../static/home-image/icon-meishi.png'
+              },{
+                  name:'甜品',
+                  image_path:'../../../static/home-image/icon-tianping.png'
+              },{
+                  name:'夜宵',
+                  image_path:'../../../static/home-image/icon-sushe.jpg'
+              },{
+                  name:'粉面',
+                  image_path:'../../../static/home-image/icon-fenmian.jpg'
               }
           ],
           address:"福州市",
@@ -248,7 +225,7 @@ export default {
     /* 头部 */
     nav{
         width:100%;
-        background-color:  #0091FF;
+        background-color:  #E6664D;
         color: white;
         height: 30vw;
     }
@@ -281,7 +258,7 @@ export default {
     /* 搜索框 */
     .main-fix{
         width: 100%;
-        background-color: #0091FF;
+        background-color: #E6664D;
         padding: 2.5vw;
     }
     .find{
@@ -315,12 +292,12 @@ export default {
         padding: 0px;
         margin: 0px;
         border-image-width:0;
-        border-color: #0091FF;
+        border-color: #E6664D;
     }
     #hot{
         border-top-width:0;
-        border-color: #0091FF;
-        background-color: #0091FF;
+        border-color: #E6664D;
+        background-color: #E6664D;
     }
     .hot table tr td{
         padding: 0 2.1vw ;
@@ -336,16 +313,18 @@ export default {
         padding: 3vw;
         width: 100%;
     }
-    .sort-box a{
+    .sort-box .home-type{
         display: inline-block;
         text-align: center;
         width: 25%;
 
     }
-    .sort-box a img{
+    .sort-box .home-type img{
         width: 12vw;
+        height: 12vw;
+        border-radius: 50%;
     }
-    .sort-box a p{
+    .sort-box .home-type p{
         display: block;
         text-align: center;
         font-size: 3.5vw;
@@ -436,7 +415,7 @@ export default {
         color: #555;
     }
     .main2 div.right span{
-        background-color: #0091ff;
+        background-color: #EF9B38;
         color: white;
         padding: 0.2vw 0.5vw;
         border-radius: 1vw;

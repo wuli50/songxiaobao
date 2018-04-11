@@ -10,20 +10,17 @@
     <transition name="down" v-if = "isShow">
       <tabbar class="tabbar">
         <tabbar-item link = "/home">
-          <img src="./assets/img/nav-icon1-dis@2x.png" alt="" slot="icon">
-          <img src="./assets/img/nav-icon1@2x.png" alt="" slot="icon-active">
-          <span slot="label">首页</span>
+          <img src="./assets/img/icon/icon-home.png" alt="" slot="icon">
+          <img src="./assets/img/icon/icon-home-click.png" alt="" slot="icon-active">
         </tabbar-item>
 
         <tabbar-item link = "/order">
-          <img src="./assets/img/nav-icon3-dis@2x.png" alt="" slot="icon">
-          <img src="./assets/img/nav-icon3-sel@2x.png" alt="" slot="icon-active">
-          <span slot="label">订单</span>
+          <img src="./assets/img/icon/icon-order.png" alt="" slot="icon">
+          <img src="./assets/img/icon/icon-order-click.png" alt="" slot="icon-active">
         </tabbar-item>
         <tabbar-item link = "/mine">
-          <img src="./assets/img/nav-icon4-dis@2x.png" alt="" slot="icon">
-          <img src="./assets/img/nav-icon4-sel@2x.png" alt="" slot="icon-active">
-          <span slot="label">我呀</span>
+          <img src="./assets/img/icon/icon-my.png" alt="" slot="icon">
+          <img src="./assets/img/icon/icon-my-click.png" alt="" slot="icon-active">
         </tabbar-item>
       </tabbar>
     </transition>
@@ -94,14 +91,10 @@ ul,ul li{
 
 body {
   background-color: #fbf9fe;
-  // overflow: hidden;
 }
-// 底部导航
-.weui-bar__item_on .weui-tabbar__label span{
-  color:#0091FF;
-  font-weight: 600;
-}
+
 .tabbar{
   position: fixed !important;
+  line-height: 10vw;
 }
 </style>
